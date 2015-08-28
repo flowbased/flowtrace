@@ -4,6 +4,7 @@
   "description": "Tracing format tools for FBP",
   "main": "index.js",
   "bin": {
+    "flowtrace-show": "./bin/flowtrace-show"
   },
   "author": "Jon Nordby <jononor@gmail.com>",
   "license": "MIT",

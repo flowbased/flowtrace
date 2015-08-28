@@ -11,6 +11,11 @@ Graph, data, components/runtime version identification.
 * Should be easy to manipulate in any language
 * Maybe support compression, to keep dump size down?
 
+Q
+
+* Should it be possible to store traces of multiple networks in one trace?
+Usecases: subgraphs, multiple top-level networks in one program
+
 ## Triggering mechanisms
 
 * Manual. Unix signal + FBP network protocol?
@@ -48,7 +53,6 @@ It might be desirable to drop the payloads first, but keep the information
 that something happened on the edge (at given time). 
 
 When data has been truncated or abbreviated, it might be nice with some markers to denote this.
-
 
 ## Relation to stacktrace
 
