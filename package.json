@@ -1,0 +1,16 @@
+{
+  "name": "flowtrace",
+  "version": "0.0.1",
+  "description": "Tracing format tools for FBP",
+  "main": "index.js",
+  "bin": {
+  },
+  "author": "Jon Nordby <jononor@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cli-color": "~0.3.3",
+    "coffee-script": "~1.9.1"
+  },
+  "devDependencies": {
+  }
+}
