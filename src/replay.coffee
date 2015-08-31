@@ -1,5 +1,6 @@
 
 debug = console.log # TEMP, use module
+protocol = require './protocol'
 
 replayEvents = (trace, sendFunc, callback) ->
 
@@ -10,22 +11,41 @@ replayEvents = (trace, sendFunc, callback) ->
 
   return callback null
 
-sendGraph = (trace, sendFunc, callback) ->
-  # FIXME: implement
-  # Have to send dummy-components probably?
+sendGraphs = (trace, sendFunc, callback) ->
+  graphs = trace.header?.graphs
+  debug 'sendgraphs', Object.keys(graphs)
+
+  runtime =
+    sendGraph: (cmd, payload) ->
+      sendFunc { protocol: 'graph', command: cmd, payload: payload }
+
+  for name, graph of graphs
+    graph.name = name
+    protocol.sendGraph graph, runtime, (err) ->
+      return callback err if err # FIXME: assumes sync
+
+  return callback null
+
+sendComponents = (trace, sendFunc, callback) ->
+  # XXX: should the trace also store component info?? maybe optional. If optional, should graph also be?
+
+  # TODO: Synthesize from graph and send
+  components = {}
+  return callback null
+
 
 flowhubLiveUrl = (options) ->
-    querystring = require 'querystring'
+  querystring = require 'querystring'
 
-    # TEMP: default handling should be moved out
-    options.host = 'localhost' if not options.host
-    options.ide = 'http://app.flowhub.io' if not options.ide
+  # TEMP: default handling should be moved out
+  options.host = 'localhost' if not options.host
+  options.ide = 'http://app.flowhub.io' if not options.ide
 
-    address = 'ws://' + options.host + ':' + options.port
-    params = 'protocol=websocket&address=' + address
-    params += '&secret=' + options.secret if options.secret
+  address = 'ws://' + options.host + ':' + options.port
+  params = 'protocol=websocket&address=' + address
+  params += '&secret=' + options.secret if options.secret
 
-    return options.ide + '#runtime/endpoint?' + querystring.escape(params)
+  return options.ide + '#runtime/endpoint?' + querystring.escape(params)
 
 knownUnsupportedCommands = (p, c) ->
   return p == 'network' and c == 'debug'
@@ -52,6 +72,9 @@ exports.main = () ->
       status = news
       runtime.send 'network', event, status, context
 
+    send = (e) ->
+      runtime.send e.protocol, e.command, e.payload, context
+
     if protocol == 'runtime' and command == 'getruntime'
       capabilities = [
         'protocol:graph' # read-only from client
@@ -64,14 +87,14 @@ exports.main = () ->
         capabilities: capabilities
         allCapabilities: capabilities
       runtime.send 'runtime', 'runtime', info, context
+      sendGraphs mytrace, send, (err) -> # XXX: right place?
+        # ignored
 
     else if protocol == 'network' and command == 'getstatus'
       runtime.send 'network', 'status', status, context
 
     else if protocol == 'network' and command == 'start'
       # replay our trace
-      send = (e) ->
-        runtime.send e.protocol, e.command, e.payload, context
       return if not mytrace
       updateStatus { started: true, running: true }, 'started'
       replayEvents mytrace, send, () ->
