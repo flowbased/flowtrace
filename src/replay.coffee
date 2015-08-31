@@ -2,10 +2,21 @@
 debug = console.log # TEMP, use module
 protocol = require './protocol'
 
+
+connectionId = (conn) ->
+  # FIXME: remove when https://github.com/noflo/noflo-ui/issues/293 is fixed
+  if conn.src?.node
+    src = "#{conn.src.node}() #{conn.src.port.toUpperCase()}"
+  else
+    src = 'DATA'
+  return "#{src} -> #{conn.tgt.port.toUpperCase()} #{conn.tgt.node}()"
+
 replayEvents = (trace, sendFunc, callback) ->
 
   for event in trace.events
-    # FIXME: have to add that horrible id shit to edges
+    event.payload.id = connectionId event.payload
+    event.payload.graph = 'default/main' # HACK
+      
     console.log event.payload
     sendFunc event
 
