@@ -27,12 +27,25 @@ sendGraphs = (trace, sendFunc, callback) ->
   return callback null
 
 sendComponents = (trace, sendFunc, callback) ->
+
   # XXX: should the trace also store component info?? maybe optional. If optional, should graph also be?
 
   # TODO: Synthesize from graph and send
   components = {}
   return callback null
 
+sendMainGraphSource = (trace, sendFunc) ->
+  # FIXME: get rid of this workaround for https://github.com/noflo/noflo-ui/issues/390
+
+  mainGraph = trace.header?.graphs['default']
+  console.log 'main', mainGraph
+  code = JSON.stringify mainGraph, null, 2
+  info =
+    name: 'main'
+    library: 'default'
+    language: 'json'
+    code: code
+  sendFunc { protocol: 'component', command: 'source', payload: info }
 
 flowhubLiveUrl = (options) ->
   querystring = require 'querystring'
@@ -80,12 +93,14 @@ exports.main = () ->
         'protocol:graph' # read-only from client
         'protocol:component' # read-only from client
         'protocol:network'
+        'component:getsource'
       ]
       info =
         type: 'fbp-spec'
         version: '0.5'
         capabilities: capabilities
         allCapabilities: capabilities
+        graph: 'default/main' # HACK, so Flowhub will ask for our graph
       runtime.send 'runtime', 'runtime', info, context
       sendGraphs mytrace, send, (err) -> # XXX: right place?
         # ignored
@@ -103,6 +118,9 @@ exports.main = () ->
     else if protocol == 'component' and command == 'list'
       # TODO> send dummy component listing
   
+    else if protocol == 'component' and command == 'getsource'
+      sendMainGraphSource mytrace, send
+
     else if knownUnsupportedCommands protocol, command
       # ignored
     else
