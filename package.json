@@ -10,8 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "cli-color": "~0.3.3",
-    "coffee-script": "~1.9.1"
+    "coffee-script": "~1.9.1",
+    "websocket": "^1.0.21"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
