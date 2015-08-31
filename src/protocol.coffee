@@ -1,6 +1,6 @@
 # FBP protocol dependent code
 
-debug = console.log # require('debug')('fbp-spec:protocol')
+debug = require('debug')('flowtrace:protocol')
 
 # Basically copied verbatim from fbp-spec, https://github.com/flowbased/fbp-spec/blob/master/src/protocol.coffee
 exports.sendGraph = (graph, runtime, callback) ->

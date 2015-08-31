@@ -1,7 +1,6 @@
 
-debug = console.log # TEMP, use module
+debug = require('debug')('flowtrace:replay')
 protocol = require './protocol'
-
 
 connectionId = (conn) ->
   # FIXME: remove when https://github.com/noflo/noflo-ui/issues/293 is fixed
@@ -16,8 +15,7 @@ replayEvents = (trace, sendFunc, callback) ->
   for event in trace.events
     event.payload.id = connectionId event.payload
     event.payload.graph = 'default/main' # HACK
-      
-    console.log event.payload
+
     sendFunc event
 
   return callback null
@@ -49,7 +47,7 @@ sendMainGraphSource = (trace, sendFunc) ->
   # FIXME: get rid of this workaround for https://github.com/noflo/noflo-ui/issues/390
 
   mainGraph = trace.header?.graphs['default']
-  console.log 'main', mainGraph
+
   code = JSON.stringify mainGraph, null, 2
   info =
     name: 'main'
