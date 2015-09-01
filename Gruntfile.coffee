@@ -104,8 +104,8 @@ module.exports = ->
   # Grunt plugins used for testing
   #@loadNpmTasks 'grunt-yamllint'
   #@loadNpmTasks 'grunt-mocha-phantomjs'
-  #@loadNpmTasks 'grunt-contrib-coffee'
-  #@loadNpmTasks 'grunt-mocha-test'
+  @loadNpmTasks 'grunt-contrib-coffee'
+  @loadNpmTasks 'grunt-mocha-test'
   @loadNpmTasks 'grunt-coffeelint'
   @loadNpmTasks 'grunt-contrib-connect'
 
@@ -123,7 +123,7 @@ module.exports = ->
     @task.run 'coffeelint'
     #@task.run 'yamllint'
     @task.run 'build'
-    #@task.run 'mochaTest'
+    @task.run 'mochaTest'
     if target != 'nodejs'
       #@task.run 'coffee:spec'
       @task.run 'connect'
