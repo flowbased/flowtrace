@@ -6,12 +6,11 @@ React = window.React
 widgets = {} # TEMP: move into own file
 
 # List of tests
-{ div, label, span } = React.DOM
+{ div, label, span, textarea } = React.DOM
 class DetailsClass
   render: () ->
-    (div {className: 'details'}, [
-      label { className: 'name' }, 'test'
-    ])
+    textarea { className: 'data', readOnly: true, spellcheck: false }, JSON.stringify @props.selection.payload, null, 2
+
 widgets.Details = React.createFactory DetailsClass
 
 class TimelineClass
@@ -20,6 +19,9 @@ class TimelineClass
       label { className: 'name' }, 'test'
     ])
 widgets.Timeline = React.createFactory TimelineClass
+
+getEvents = (trace, predicate) ->
+  trace.events.filter predicate
 
 
 # DOM helpers
@@ -32,15 +34,17 @@ main = () ->
 
   onChange = (app) ->
     React.render (widgets.Timeline {trace: app.trace}), id('timeline')
-    React.render (widgets.Details {trace: app.trace}), id('details')
+    React.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
     console.log 'render'
 
   url = '/115731-28179-v85af2.json'
   loadTrace = () ->
     flowtrace.trace.loadHttp url, (err, trace) ->
       console.log 'load', err, Object.keys(trace)
+      dataEvents = getEvents(trace, (e) -> e.command == 'data')
       app =
         trace: trace
+        selection: dataEvents[dataEvents.length-1]
       onChange app
 
   setTimeout loadTrace, 100

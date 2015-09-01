@@ -22,16 +22,27 @@ body {
   width: 100%
 }
 
-/* Timeline & details */
+/* Timeline */
 #timeline {
   width: 66%;
   height: 300px;
-  background-color: gray;
+  float: left;
+
+  background-color: DarkGray;
 }
 
 
+/* Details */
 #details {
-  width: 33%
+  width: 33%;
   height: 300px;
   float: right;
+
+  background-color: DimGray;
 }
+
+#details .data {
+  width: 100%;
+  height: 100%;
+}
+
