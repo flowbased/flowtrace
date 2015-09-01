@@ -1,6 +1,4 @@
 
-clc = require 'cli-color'
-
 
 connectionId = (data) ->
   { src, tgt } = data
@@ -13,6 +11,8 @@ connectionId = (data) ->
 
 renderText = (msg, options={}) ->
   return null if msg.protocol != 'network'
+
+  clc = require 'cli-color'
 
   identifier = (data) ->
     id = connectionId data

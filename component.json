@@ -1,5 +1,5 @@
 {
-  "name": "fbp-spec",
+  "name": "flowtrace",
   "description": "Data-driven BDD tests for FBP runtimes",
   "author": "Jon Nordby <jononor@gmail.com>",
   "repo": "jonnor/flowtrace",
@@ -13,7 +13,9 @@
     "https://raw.githubusercontent.com"
   ],
   "scripts": [
+    "src/common.coffee",
     "src/trace.coffee",
+    "src/protocol.coffee",
     "src/render.coffee",
     "src/replay.coffee",
     "src/index.coffee"
