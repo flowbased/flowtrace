@@ -25,19 +25,19 @@ getDataEvents = (edges, trace) ->
   events = []
 
   # FIXME: use proper timestamps
-  now = moment().minutes(0).seconds(0).milliseconds(0);
+
 
   trace.events.forEach (event, idx) ->
     return if event.command != 'data'
 
-    start = now.clone().add(idx*10, 'hours')
+    start = moment(event.payload.time)
     group = edges.indexOf(edgeId(event.payload))
     data = event.payload.data
     events.push
       group: group,
       content: '<span style="color:#97B0F8;">' + data  + '</span>'
       start: start,
-      type: 'box'
+      type: 'point'
   return events
 
 clone = (obj) ->
@@ -65,14 +65,15 @@ edgeConnections = (edges, trace) ->
       pairs.push clone conn
     else
       # ignore
-  
-  now = moment().minutes(0).seconds(0).milliseconds(0);
 
   events = []
   pairs.forEach (pair, idx) ->
     group = edges.indexOf(edgeId(pair.connect.payload))
-    start = now.clone().add(idx*10, 'hours')
-    end = start.clone().add(50, 'hours')
+    start = moment(pair.connect.payload.time)
+    end = moment(pair.connect.payload.time).add('1', 'millisecond') # HACK, to make range show
+  
+    console.log 'c', start, end
+
     events.push
       type: 'background'
       content: ' '
@@ -112,6 +113,7 @@ class TimelineClass
     container = document.getElementById('timeline'); # FIXME: integrate with React mount
     options =
       groupOrder: 'id'
+      timeAxis: {scale: 'millisecond', step: 1}
 
     timeline = new vis.Timeline(container);
     timeline.setOptions options
@@ -144,7 +146,7 @@ main = () ->
     React.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
     console.log 'render'
 
-  url = '/115731-28179-v85af2.json'
+  url = '/11581-17566-19lvg3o.json'
   loadTrace = () ->
     flowtrace.trace.loadHttp url, (err, trace) ->
       console.log 'load', err, Object.keys(trace)
