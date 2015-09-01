@@ -1,0 +1,24 @@
+{
+  "name": "fbp-spec",
+  "description": "Data-driven BDD tests for FBP runtimes",
+  "author": "Jon Nordby <jononor@gmail.com>",
+  "repo": "jonnor/flowtrace",
+  "version": "0.0.1",
+  "main": "src/index.coffee",
+  "keywords": [],
+  "dependencies": {
+    "visionmedia/debug": "*"
+  },
+  "remotes": [
+    "https://raw.githubusercontent.com"
+  ],
+  "scripts": [
+    "src/trace.coffee",
+    "src/render.coffee",
+    "src/replay.coffee",
+    "src/index.coffee"
+  ],
+  "json": [
+    "component.json"
+  ]
+}
