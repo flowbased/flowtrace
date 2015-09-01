@@ -1,0 +1,37 @@
+
+/* Reset */
+* {
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+  position: relative;
+}
+
+body {
+  color: white;
+  background-color: black;
+}
+
+/* Graph area */
+#graph {
+  width: 100%;
+  height: 700px;
+}
+
+#graph img {
+  width: 100%
+}
+
+/* Timeline & details */
+#timeline {
+  width: 66%;
+  height: 300px;
+  background-color: gray;
+}
+
+
+#details {
+  width: 33%
+  height: 300px;
+  float: right;
+}
