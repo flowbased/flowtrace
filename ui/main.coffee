@@ -156,6 +156,9 @@ main = () ->
         selection: dataEvents[dataEvents.length-1]
       onChange app
 
+      mainGraph = trace.header.graphs['default'] # FIXME: don't hardcode
+      window.loadGraph mainGraph # to graph editor
+
   setTimeout loadTrace, 100
   console.log 'main done'
 
