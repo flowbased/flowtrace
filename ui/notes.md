@@ -41,21 +41,40 @@ Testing
 
 Breakpoints
 
-- Ability to configure data-breakpoints on edge
+- Ability to configure data-breakpoints on edge, triggered by runtime
 - 
 
 
 
 # Implementation
 
+## Architecture
+
 - UI split into two major pieces
 * Timeline. Time-centric view of whole network activity. Markers for data/groups/connect netstart/netstop
-* Data details.
+* Data details. Visualizes the selected data, or compares two selected pieces of data
+
+## Timeline
 
 - Network change markers should support metadata.
 Especially useful is a short 'reason', and a 'shortlog' describing the changes.
 Possibility of linking to a 'diff view' for details of change.
 Example: a change in the testsuite, or a change in a component causing test to re-run
+
+## Visualization plugins
+
+* Registration of plugin by declaring ability to handle a given 'datatype'
+and capabilities: 'view', 'diff', 'edit'
+* Put datatype of data into network:data packets.
+Datatype can be URL to (JSON) schema, which can also register visualizer plugin(s)
+* noflo-ui provides a super-basic set of plugins. 'string', 'number', 'object' and array-of these
+* Component libraries can/should specify plugins for their particular datatypes
+* Plugins should be served as offline-capable
+* Dimensions/styling passed in via URL params
+* Plugin loaded as iframe using registered URL
+* Plugin<->host communication over `postMessage`?
+* TODO: check for prior art, existing libraries/frameworks
+* Should be reusable outside flowtrace/noflo-ui, ideally also outside FBP
 
 
 # UX ideas
