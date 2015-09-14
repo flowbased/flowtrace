@@ -31,6 +31,14 @@ module.exports = ->
         files:
           'browser/flowtrace.js': ['src/index.coffee']
 
+      uilibs:
+        files:
+          'build/noflo.js': ['ui/browserify.js']
+        options:
+          transform: ['coffeeify']
+          browserifyOptions:
+            require: 'noflo'
+
     'bower-install-simple':
       deps:
         options:
@@ -104,7 +112,7 @@ module.exports = ->
 
   # Grunt plugins used for building
   #@loadNpmTasks 'grunt-yaml'
-  #@loadNpmTasks 'grunt-browserify'
+  @loadNpmTasks 'grunt-browserify'
   @loadNpmTasks 'grunt-bower-install-simple'
   @loadNpmTasks 'grunt-noflo-browser'
   @loadNpmTasks 'grunt-contrib-watch'
@@ -123,10 +131,13 @@ module.exports = ->
 
 
   # Our local tasks
-  @registerTask 'build', 'Build', (target = 'all') =>
-    #@task.run 'yaml'
-    @task.run 'noflo_browser'
+  @registerTask 'build-ui', 'Build UI', (target = 'all') =>
     @task.run 'bower-install-simple'
+    @task.run 'browserify:uilibs'
+
+  @registerTask 'build', 'Build', (target = 'all') =>
+    @task.run 'build-ui'
+    @task.run 'noflo_browser'
 
   @registerTask 'test', 'Build and run tests', (target = 'all') =>
     @task.run 'coffeelint'
