@@ -3,7 +3,7 @@
   "description": "Data-driven BDD tests for FBP runtimes",
   "author": "Jon Nordby <jononor@gmail.com>",
   "repo": "flowbased/flowtrace",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "src/index.coffee",
   "keywords": [],
   "dependencies": {
