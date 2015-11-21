@@ -1,6 +1,6 @@
 {
   "name": "flowtrace",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Tracing format tools for FBP",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,7 @@
     "flowtrace-replay": "./bin/flowtrace-replay"
   },
   "bugs": {
-    "url" : "https://github.com/flowbased/flowtrace/issues",
+    "url" : "https://github.com/flowbased/flowtrace/issues"
   },
   "author": "Jon Nordby <jononor@gmail.com>",
   "license": "MIT",
