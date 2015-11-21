@@ -13,7 +13,9 @@ and provide debugging tools for working with these traces.
 Prototype
 
 * File format not finalized
-* NoFlo has experimental support for storing `.flowtrace.json` files
+* NoFlo has support for creating flowtraces,
+from [noflo-nodejs 0.6](https://github.com/noflo/noflo-nodejs#debugging)
+and [noflo-runtime-msgflo 0.2.2](https://github.com/noflo/noflo-runtime-msgflo#debugging)
 * Some commandline tools exist for working with flowtraces
 * Some not-yet-useful UI prototypes exist
 

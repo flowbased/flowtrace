@@ -18,8 +18,9 @@ Usecases: subgraphs, multiple top-level networks in one program
 
 ## Triggering mechanisms
 
-* Manual. Unix signal + FBP network protocol?
-Can also be used to implement external triggers, for instance by a service monitoring system.
+* Manual, local on system. Unix signal
+* Remote over network. FBP network protocol / messagequeue
+Can be used to trigger manually, or to implement external triggers, for instance by a service monitoring system.
 * Automatic. On exceptions, uncaught errors.
 * Batch. Set up that network execution will be dumped beforehand.
 * Data-breakpoints
