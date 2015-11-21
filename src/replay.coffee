@@ -46,7 +46,14 @@ sendComponents = (trace, sendFunc, callback) ->
 sendMainGraphSource = (trace, sendFunc) ->
   # FIXME: get rid of this workaround for https://github.com/noflo/noflo-ui/issues/390
 
-  mainGraph = trace.header?.graphs['default']
+  graphs = trace.header?.graphs
+  throw new Error "Trace file has no graphs in header" if not graphs or graphs.length < 1
+  graphNames = Object.keys(graphs)
+  console.log "WARNING: Trace file had multiple graphs, chose first one: #{graphNames}" if graphNames.length != 1
+  mainGraph = graphs[graphNames[0]]
+
+  # TODO: specify main graph in trace file
+  # MAYBE: allow to override main graph (on commandline)?
 
   code = JSON.stringify mainGraph, null, 2
   info =
