@@ -1,14 +1,21 @@
 {
   "name": "flowtrace",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Tracing format tools for FBP",
   "main": "index.js",
   "bin": {
     "flowtrace-show": "./bin/flowtrace-show",
     "flowtrace-replay": "./bin/flowtrace-replay"
   },
+  "bugs": {
+    "url" : "https://github.com/flowbased/flowtrace/issues",
+  },
   "author": "Jon Nordby <jononor@gmail.com>",
   "license": "MIT",
+  "repository" : {
+     "type" : "git",
+     "url" : "https://github.com/flowbased/flowtrace.git"
+  },
   "dependencies": {
     "cli-color": "~0.3.3",
     "coffee-script": "~1.9.1",
