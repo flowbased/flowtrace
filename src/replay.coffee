@@ -68,7 +68,6 @@ flowhubLiveUrl = (options) ->
 
   # TEMP: default handling should be moved out
   options.host = 'localhost' if not options.host
-  options.ide = 'http://app.flowhub.io' if not options.ide
 
   address = 'ws://' + options.host + ':' + options.port
   params = 'protocol=websocket&address=' + address
@@ -79,15 +78,26 @@ flowhubLiveUrl = (options) ->
 knownUnsupportedCommands = (p, c) ->
   return p == 'network' and c == 'debug'
 
+parse = (args) ->
+  program = require 'commander'
+
+  program
+    .arguments('<flowtrace.json>')
+    .action( (trace) -> program.trace = trace )
+    .option('--ide <URL>', 'FBP IDE to use for live-url', String, 'http://app.flowhub.io')
+    .option('--host <hostname>', 'Hostname we serve on, for live-url', String, 'localhost')
+    .option('--port <PORT>', 'Command to launch runtime under test', Number, 3333)
+    .parse(process.argv)
+
+  return program
+
 exports.main = () ->
   trace = require './trace'
   http = require 'http'
   websocket = require './websocket' # FIXME: split out transport interface of noflo-runtime-*, use that directly
 
-  port = 3333
-  filepath = process.argv[2]
-  options =
-    verbose: true
+  options = parse process.argv
+  filepath = options.trace
 
   mytrace = null
   httpServer = new http.Server
@@ -142,13 +152,11 @@ exports.main = () ->
     else
       debug 'Warning: Unknown FBP protocol message', protocol, command
 
-
   trace.loadFile filepath, (err, tr) ->
     throw err if err
     mytrace = tr
-    httpServer.listen port, (err) ->
+    httpServer.listen options.port, (err) ->
       throw err if err
 
-      console.log 'Trace live URL:', flowhubLiveUrl { port: port }
+      console.log 'Trace live URL:', flowhubLiveUrl options
 
-      
