@@ -8,17 +8,18 @@
     "flowtrace-replay": "./bin/flowtrace-replay"
   },
   "bugs": {
-    "url" : "https://github.com/flowbased/flowtrace/issues"
+    "url": "https://github.com/flowbased/flowtrace/issues"
   },
   "author": "Jon Nordby <jononor@gmail.com>",
   "license": "MIT",
-  "repository" : {
-     "type" : "git",
-     "url" : "https://github.com/flowbased/flowtrace.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flowbased/flowtrace.git"
   },
   "dependencies": {
     "cli-color": "~0.3.3",
     "coffee-script": "~1.9.1",
+    "commander": "^2.9.0",
     "debug": "^2.2.0",
     "opn": "^3.0.3",
     "websocket": "^1.0.21"
