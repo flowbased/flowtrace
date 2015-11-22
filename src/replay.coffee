@@ -118,6 +118,7 @@ parse = (args) ->
     .option('--ide <URL>', 'FBP IDE to use for live-url', String, 'http://app.flowhub.io')
     .option('--host <hostname>', 'Hostname we serve on, for live-url', String, 'autodetect')
     .option('--port <PORT>', 'Command to launch runtime under test', Number, 3333)
+    .option('-n --no-open', 'Automatically open replayed trace in browser', Boolean, true)
     .parse(process.argv)
 
   return program
@@ -127,6 +128,7 @@ exports.main = () ->
   trace = require './trace'
   http = require 'http'
   websocket = require './websocket' # FIXME: split out transport interface of noflo-runtime-*, use that directly
+  open = require 'opn'
 
   options = parse process.argv
   options = normalizeOptions options
@@ -191,5 +193,11 @@ exports.main = () ->
     httpServer.listen options.port, (err) ->
       throw err if err
 
-      console.log 'Trace live URL:', flowhubLiveUrl options
-
+      liveUrl = flowhubLiveUrl options
+      console.log 'Trace live URL:', liveUrl
+      if options.open
+        open liveUrl, (err) ->
+          if err
+            console.log 'Failed to open live URL in browser:', err
+          else
+            console.log 'Opened in browser'

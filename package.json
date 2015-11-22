@@ -20,6 +20,7 @@
     "cli-color": "~0.3.3",
     "coffee-script": "~1.9.1",
     "debug": "^2.2.0",
+    "opn": "^3.0.3",
     "websocket": "^1.0.21"
   },
   "devDependencies": {
