@@ -78,6 +78,37 @@ flowhubLiveUrl = (options) ->
 knownUnsupportedCommands = (p, c) ->
   return p == 'network' and c == 'debug'
 
+discoverHost = (preferred_iface) ->
+  os = require 'os' # node.js only
+
+  ifaces = os.networkInterfaces()
+  address = undefined
+  int_address = undefined
+
+  filter = (connection) ->
+    if connection.family != 'IPv4'
+      return
+    if connection.internal
+      int_address = connection.address
+    else
+      address = connection.address
+    return
+
+  if typeof preferred_iface == 'string' and preferred_iface in ifaces
+    ifaces[preferred_iface].forEach filter
+  else
+    for device of ifaces
+      ifaces[device].forEach filter
+  address or int_address
+
+normalizeOptions = (options) ->
+  if options.host == 'autodetect'
+    options.host = discoverHost()
+  else if match = /autodetect\(([a-z0-9]+)\)/.exec(options.host)
+    options.host = discoverHost(match[1])
+
+  return options
+
 parse = (args) ->
   program = require 'commander'
 
@@ -85,11 +116,12 @@ parse = (args) ->
     .arguments('<flowtrace.json>')
     .action( (trace) -> program.trace = trace )
     .option('--ide <URL>', 'FBP IDE to use for live-url', String, 'http://app.flowhub.io')
-    .option('--host <hostname>', 'Hostname we serve on, for live-url', String, 'localhost')
+    .option('--host <hostname>', 'Hostname we serve on, for live-url', String, 'autodetect')
     .option('--port <PORT>', 'Command to launch runtime under test', Number, 3333)
     .parse(process.argv)
 
   return program
+
 
 exports.main = () ->
   trace = require './trace'
@@ -97,6 +129,7 @@ exports.main = () ->
   websocket = require './websocket' # FIXME: split out transport interface of noflo-runtime-*, use that directly
 
   options = parse process.argv
+  options = normalizeOptions options
   filepath = options.trace
 
   mytrace = null
