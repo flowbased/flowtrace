@@ -22,6 +22,9 @@ renderText = (msg, options={}) ->
     result += clc.blue.italic id
     return result
 
+  if msg.error
+    return "TRACE ERROR: #{msg.error}"
+
   data = msg.payload
   text = switch msg.command
     when 'connect' then "#{identifier(data)} #{clc.yellow('CONN')}"
