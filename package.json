@@ -17,7 +17,7 @@
     "url": "https://github.com/flowbased/flowtrace.git"
   },
   "dependencies": {
-    "cli-color": "~0.3.3",
+    "cli-color": "~1.1.0",
     "coffee-script": "~1.9.1",
     "commander": "^2.9.0",
     "debug": "^2.2.0",

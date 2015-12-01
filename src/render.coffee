@@ -13,6 +13,7 @@ renderText = (msg, options={}) ->
   return null if msg.protocol != 'network'
 
   clc = require 'cli-color'
+  ansiStrip = require('cli-color/strip');
 
   identifier = (data) ->
     id = connectionId data
@@ -33,6 +34,10 @@ renderText = (msg, options={}) ->
       else
         "#{identifier(data)} #{clc.green('DATA')}"
     else null
+
+  if not process?.stdout.isTTY
+    # in case we are redirected to a file or similar
+    text = ansiStrip text
 
   return text
 
