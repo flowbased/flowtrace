@@ -20,7 +20,7 @@ identifier = (data) ->
   id = connectionId data
   result = ''
   result += "#{clc.magenta.italic(data.subgraph.join(':'))} " if data.subgraph
-  result += clc.blue.italic id
+  result += clc.blueBright.italic id
   return result
 
 duration = (data) ->
