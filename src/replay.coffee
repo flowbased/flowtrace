@@ -157,7 +157,7 @@ exports.main = () ->
         'component:getsource'
       ]
       info =
-        type: 'fbp-spec'
+        type: 'flowtrace-replay'
         version: '0.5'
         capabilities: capabilities
         allCapabilities: capabilities
