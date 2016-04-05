@@ -111,6 +111,7 @@ class TimelineClass
 
     # 
     container = document.getElementById('timeline'); # FIXME: integrate with React mount
+    clearChildren container
     options =
       groupOrder: 'id'
       timeAxis: {scale: 'millisecond', step: 1}
@@ -136,6 +137,11 @@ getEvents = (trace, predicate) ->
 # DOM helpers
 id = (name) ->
   document.getElementById name
+
+clearChildren = (node) ->
+  while node.firstChild
+    node.removeChild node.firstChild
+  return true
 
 # Main
 main = () ->
