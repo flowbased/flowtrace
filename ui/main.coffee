@@ -9,7 +9,10 @@ widgets = {} # TEMP: move into own file
 { div, label, span, textarea } = React.DOM
 class DetailsClass
   render: () ->
-    data = JSON.stringify @props.selection.payload.data, null, 2
+    if @props.selection
+      data = JSON.stringify @props.selection.payload.data, null, 2
+    else
+      data = ''
 
     textarea { className: 'data', readOnly: true, spellcheck: false }, data
 
