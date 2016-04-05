@@ -4,7 +4,7 @@ window.loadGraph = (json) ->
 
   # Remove loading message
   loading = document.getElementById('loading')
-  loading.parentNode.removeChild loading
+  loading.parentNode.removeChild loading if loading
   # Load graph
   editor = document.getElementById('graph')
   graph = if json.data then JSON.parse(json.data.files['noflo.json'].content) else json
