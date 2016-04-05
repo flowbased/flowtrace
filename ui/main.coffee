@@ -141,25 +141,36 @@ id = (name) ->
 main = () ->
   console.log 'main'
 
-  onChange = (app) ->
+  updateApp = (app) ->
     React.render (widgets.Timeline {trace: app.trace}), id('scratch')
     React.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
     console.log 'render'
 
-  url = '/11581-17566-19lvg3o.json'
-  loadTrace = () ->
-    flowtrace.trace.loadHttp url, (err, trace) ->
-      console.log 'load', err, Object.keys(trace)
-      dataEvents = getEvents(trace, (e) -> e.command == 'data')
-      app =
-        trace: trace
-        selection: dataEvents[dataEvents.length-1]
-      onChange app
+  changeTrace = (err, trace) ->
+    console.log 'load', err, Object.keys(trace)
+    dataEvents = getEvents(trace, (e) -> e.command == 'data')
+    app =
+      trace: trace
+      selection: dataEvents[dataEvents.length-1]
+    updateApp app
 
-      mainGraph = trace.header.graphs['default'] # FIXME: don't hardcode
-      window.loadGraph mainGraph # to graph editor
+    mainGraph = trace.header.graphs['default'] # FIXME: don't hardcode
+    window.loadGraph mainGraph # to graph editor
 
-  setTimeout loadTrace, 100
+  id('loadfileinput').addEventListener 'change', (event) ->
+    file = event.target.files[0]
+    console.log 'loadfile', file.name
+    reader = new FileReader
+    reader.onload = (e) ->
+      contents = reader.result
+      trace = flowtrace.trace.loadString contents
+      changeTrace null, trace
+    reader.readAsText(file)
+
+  loadDefault = () ->
+    defaultTrace = '/11581-17566-19lvg3o.json'
+    flowtrace.trace.loadHttp defaultTrace, changeTrace
+  setTimeout loadDefault, 100
   console.log 'main done'
 
 main()
