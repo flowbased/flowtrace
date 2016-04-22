@@ -71,3 +71,57 @@ And especially when components are fairly 'fat' (contains lots of code).
 Unlike typical stacktraces, flowtraces can keep 'history', that is to
 keep information about events which happened seconds or minutes before.
 
+## Event store
+
+Flowtraces are currently serialized files of one or more network execution of a single runtime.
+However, in order to fully utilize the data in them, being able to store them all in a query-able
+database would be beneficial.
+This is especially for analysis which require data from different traces:
+across multiple network invocations, different machines and versions of the software.
+
+It should be possible to stream the data directly to such an event store from production machines.
+However the store should probably be the primary interface for analysis, with flowtrace files
+being imported in before doing non-trivial analysis on it.
+
+### Usecases
+
+* Allow to lookup data for any production failure. Look at it, compare it against cases which did not fail.
+* Deduplicate production failures reported into a single bug, by finding which follow a common pattern.
+Also to estimate the impact of a single bug.
+* Do performance analytics. Both coarse-grained and fine-grained. Find hotspots and hickups.
+* (maybe) allow to perform invariant-based testing of components, by searching
+for input/output data in DB, and checking preconditions/postconditions.
+* (maybe) automatically generating minimal testcases
+
+Traces are *primarily meta-data* about the execution of an FBP system.
+However, such an event store may also be used to store *data* from the system.
+For instance to store sensor data, computation results and analytics.
+
+### Possible SQL representation
+
+SQL has the advantage that many very scalable solutions and techniques exists for it.
+Thanks to IndexedDB one can also use it in the browser, which is interesting for interactive exploration and analysis.
+
+Events table
+
+    id: UUID | identifier for this event
+    time: DateTime | When the event was created
+    event: string | Type of event. Typically "data"
+
+    runtime: UUID | id of the FBP runtime this event comes from
+    component: string | component (or subgraph) this event originated in
+    networkpath: string | Path of the network (@component instance) from top-level of @runtime. Ex: "subsystem.mymodule.performfoo"
+    sourcenode: string | Name of node @data was sent *from*
+    sourceport: string | Port the @data was sent *from*
+    targetnode: string | Name of node @data twas sent *to*
+    targetport: string | Port the @data was sent *to*
+
+    json: JSON | data in JSON representation
+    blob: Blob | data as a binary blob, if it cannot be represented as JSON
+
+    # TODO: specify versioning information
+
+There should also be some versioning information.
+Possibly this could be some hash (git SHA?) on the runtime level.
+Would then have to lookup details on component/dependency version
+
