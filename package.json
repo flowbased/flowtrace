@@ -27,6 +27,7 @@
   "devDependencies": {
     "coffeeify": "^1.1.0",
     "coffeelint": "^1.11.1",
+    "dom-to-image": "^2.4.0",
     "grunt": "^0.4.5",
     "grunt-bower-install-simple": "^1.1.4",
     "grunt-browserify": "^4.0.1",

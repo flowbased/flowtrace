@@ -58,3 +58,9 @@ body {
   bottom: 0;
   left: 0;
 }
+
+#exportimage {
+  position: fixed;
+  bottom: 0;
+  left: 350px;
+}

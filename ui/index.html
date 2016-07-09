@@ -48,6 +48,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
+    <script src="../node_modules/dom-to-image/dist/dom-to-image.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
     <script src="/browser/flowtrace.js"></script>
   </head>
@@ -68,6 +69,7 @@
     <div id='scratch'></div>
     <input type='file' id='loadfileinput'></input>
     <label for='loadfileinput' id='loadfilelabel'>Load .flowtrace</label>
+    <button id='exportimage'>Export graph image</button>
 
     <div id="loading" style="position:absolute; top:10px; left:10px; background-color:white; padding:10px; border-radius:5px;">
       <img src="loading.gif"/>

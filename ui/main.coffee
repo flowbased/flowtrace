@@ -166,6 +166,18 @@ main = () ->
     mainGraph = trace.header.graphs['default'] # FIXME: don't hardcode
     window.loadGraph mainGraph # to graph editor
 
+  id('exportimage').addEventListener 'click', (event) ->
+    console.log('exporting img', Object.keys(domtoimage));
+    node = document.getElementById('graph')
+    domtoimage.toPng(node)
+    .then (dataUrl) ->
+      link = document.createElement('a')
+      link.download = 'my-image-name.jpeg'
+      link.href = dataUrl;
+      link.click();
+    .catch (err) ->
+      console.error err
+
   id('loadfileinput').addEventListener 'change', (event) ->
     file = event.target.files[0]
     console.log 'loadfile', file.name
