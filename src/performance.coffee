@@ -5,11 +5,11 @@ debug = require('debug')('flowtrace:performance')
 
 
 svg =
-  node: (type, attributes) ->
+  node: (type, attributes, children) ->
     attrs = ""
     for k, v of attributes
       attrs += "#{k}=\"#{v}\"\n"
-    return "<#{type} \n#{attrs} > </#{type}>"
+    return "<#{type} \n#{attrs} >#{children}</#{type}>"
   line: (x0, y0, width, height) ->
     return "m #{x0},#{y0} #{width},#{height}"
 
@@ -58,27 +58,43 @@ extractFlows = (graph) ->
 # Notes on graphs and color 
 # http://www.perceptualedge.com/articles/visual_business_intelligence/rules_for_using_color.pdf
 
-# TODO: "unit", number of seconds per SVG px should be configurable, to creating comparable timelines
-renderFlow = (flow, weights) ->
+renderFlow = (flow, times) ->
   objects = []
 
   style =
     baseHeight: 20
-    baseWidth: 100
     dividerHeightFraction: 0.2
     divider: "stroke:#000000;stroke-opacity:1"
     rect: "fill:#77cdb8;fill-opacity:1"
+    unitSeconds: 100
   style.dividerHeight = style.baseHeight*(1+style.dividerHeightFraction)
+
+
+  # XXX: should times be based on process.port combo instead of just process?
+
+  # calculate total and weights
+  weights = {}
+  totalTime = 0
+  for conn in flow
+    totalTime += times[conn.src.process]
+  
+  debug 'total time', totalTime
+
+  for conn in flow
+    p = conn.src.process
+    weights[p] = times[p]/totalTime
 
   xPos = 0
   yPos = 0
+  rects = []
+  dividers = []
+  labels = []
   for conn in flow
-    process = conn.src.process
+    p = conn.src.process
+    weight = weights[p]
+    debug 'weight', p, weight
 
-    weight = weights[process]
-    debug 'weight', process, weight
-
-    width = style.baseWidth * weight
+    width = times[p] * style.unitSeconds
     height = style.baseHeight
     nextPos = xPos + width
     rect = svg.node 'rect', { x: xPos, y: yPos, width: width, height: height, style: style.rect }
@@ -86,19 +102,28 @@ renderFlow = (flow, weights) ->
     dBase = yPos-(style.baseHeight*style.dividerHeightFraction)/2
     divider = svg.node 'path', d: svg.line(nextPos, dBase, 0, dHeight), style: style.divider
 
-    objects.push rect
-    objects.push divider
+    midX = (xPos+nextPos)/2
+
+    timeMs = (times[p]*1000).toFixed(0)
+    percent = (weights[p]*100).toFixed(1)
+    t = "rotate(-270)" # flips X and Y
+    label = svg.node 'text', { transform: t, y: -midX, x: yPos+10 }, "#{p}: #{timeMs} ms (#{percent}%)"
+
+    rects.push rect
+    dividers.push divider
+    labels.push label
     xPos = nextPos
+
+  # need to take care of order so clipping is right
+  objects = objects.concat rects
+  objects = objects.concat dividers
+  objects = objects.concat labels
 
   return objects
 
 # Render timelines of a FBP flow, with size of each process proportional to the time spent in that process
-# TODO: extract the primary (longest?) flow
 # TODO: also render secondary flows
-# TODO: render forks and joins nicely
-# TODO: render text with name of process
-# TODO: render text with time (in seconds/milliseconds)
-# TODO: calculate and render percentages
+# MAYBE: render forks and joins
 # MAYBE: support average and variance? Or perhaps this should be done by the tool before. Percentile is also interesting
 renderTimeline = (graph, times) ->
   objects = []
@@ -109,10 +134,10 @@ renderTimeline = (graph, times) ->
   flows = flows.sort (a, b) -> a.length > b.length
   flow = flows[0] # longest
 
-  pretty = flow.map (c) -> "#{c.src.process}.#{c.src.port} -> #{c.tgt.process}.#{c.tgt.port}"
-  debug 'rendering flow', flow
 
-  # FIXME: normalize proportions based on total number in weights
+  pretty = flow.map (c) -> "#{c.src.process}.#{c.src.port} -> #{c.tgt.process}.#{c.tgt.port}"
+  debug 'rendering flow', pretty
+
   objects = objects.concat renderFlow flow, times
 
   output = "<svg>#{objects.join('\n')}</svg>"
