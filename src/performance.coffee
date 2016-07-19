@@ -13,22 +13,78 @@ svg =
   line: (x0, y0, width, height) ->
     return "m #{x0},#{y0} #{width},#{height}"
 
+extractFlows = (graph) ->
+  # PERF: consider keeping around the process-sorted-connections
+  targetConnections = (name) ->
+    graph.connections.filter (c) ->
+      # IIPs don't count
+      return c.src.process and c.tgt.process == name
+  sourceConnections = (name) ->
+    graph.connections.filter (c) ->
+      # IIPs don't count
+      return c.src?.process == name
+
+  # XXX: pretty sure this has serious bugs
+  walkConnectionGraph = (start, collect, flow = []) ->
+    outs = sourceConnections start
+    debug 'w', start, outs.length, flow.length
+    for c in outs
+      tgt = c.tgt.process
+      subs = walkConnectionGraph tgt, collect, flow
+      if subs.length == 0
+        # end of a flow, collect and reset
+        collect(flow) if collect
+        flow = []
+      else
+        flow.unshift c
+
+    return outs
+
+  flows = []
+
+  # find starting points
+  for process, data of graph.processes
+    ins = targetConnections process
+    outs = sourceConnections process
+    #debug 'c', process, ins.length, outs.length
+    startProcess = ins.length == 0
+    continue if not startProcess
+
+    walkConnectionGraph process, (flow) ->
+      flows.push flow
+
+  return flows
+
+# Notes on graphs and color 
+# http://www.perceptualedge.com/articles/visual_business_intelligence/rules_for_using_color.pdf
+
+# TODO: "unit", number of seconds per SVG px should be configurable, to creating comparable timelines
 renderFlow = (flow, weights) ->
   objects = []
 
   style =
     baseHeight: 20
     baseWidth: 100
-  style.dividerHeight = style.baseHeight*1.2
+    dividerHeightFraction: 0.2
+    divider: "stroke:#000000;stroke-opacity:1"
+    rect: "fill:#77cdb8;fill-opacity:1"
+  style.dividerHeight = style.baseHeight*(1+style.dividerHeightFraction)
 
   xPos = 0
   yPos = 0
-  for process in flow
-    width = style.baseWidth * weights[process]
+  for conn in flow
+    process = conn.src.process
+
+    weight = weights[process]
+    debug 'weight', process, weight
+
+    width = style.baseWidth * weight
     height = style.baseHeight
     nextPos = xPos + width
-    rect = svg.node 'rect', { x: xPos, y: yPos, width: width, height: height, style: "fill:#f4effd;fill-opacity:1" }
-    divider = svg.node 'path', d: svg.line(nextPos, yPos, 0, height), style: "stroke:#000000;stroke-opacity:1"
+    rect = svg.node 'rect', { x: xPos, y: yPos, width: width, height: height, style: style.rect }
+    dHeight = style.dividerHeight
+    dBase = yPos-(style.baseHeight*style.dividerHeightFraction)/2
+    divider = svg.node 'path', d: svg.line(nextPos, dBase, 0, dHeight), style: style.divider
 
     objects.push rect
     objects.push divider
@@ -49,8 +105,12 @@ renderTimeline = (graph, times) ->
 
   debug 'processes', Object.keys graph.processes
 
-  # FIXME
-  flow = ['load', 'calc', 'scale']
+  flows = extractFlows graph
+  flows = flows.sort (a, b) -> a.length > b.length
+  flow = flows[0] # longest
+
+  pretty = flow.map (c) -> "#{c.src.process}.#{c.src.port} -> #{c.tgt.process}.#{c.tgt.port}"
+  debug 'rendering flow', flow
 
   # FIXME: normalize proportions based on total number in weights
   objects = objects.concat renderFlow flow, times
@@ -64,9 +124,14 @@ main = () ->
 
   # TODO: accept times on commandline
   times =
-    'load': 1.00
-    'calc': 2.50
+    'pre': 1.00
+    'queue': 2.50
+    'download': 0.50
     'scale': 0.50
+    'calc': 2.50
+    'load': 2.50
+    'save': 0.20
+    'uploadOutput': 0.2
 
   callback = (err, result) ->
     if err
@@ -74,7 +139,7 @@ main = () ->
       console.error err.stack if err.stack
       process.exit 2
     else
-      debug 'output\n', result
+      debug 'output\n', result.length
       console.log result
       process.exit 0
 
