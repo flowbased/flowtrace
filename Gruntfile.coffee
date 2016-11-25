@@ -137,6 +137,7 @@ module.exports = ->
 
   @registerTask 'build', 'Build', (target = 'all') =>
     @task.run 'build-ui'
+    @task.run 'browserify'
     @task.run 'noflo_browser'
 
   @registerTask 'test', 'Build and run tests', (target = 'all') =>
