@@ -7,6 +7,16 @@
     "flowtrace-show": "./bin/flowtrace-show",
     "flowtrace-replay": "./bin/flowtrace-replay"
   },
+  "files": [
+    "bin",
+    "src",
+    "browser",
+    "spec",
+    "ui",
+    "index.js",
+    "CHANGES.md"
+    "README.md"
+  ],
   "bugs": {
     "url": "https://github.com/flowbased/flowtrace/issues"
   },
