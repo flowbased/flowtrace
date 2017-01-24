@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "cli-color": "~1.1.0",
-    "coffee-script": "~1.9.1",
+    "coffee-script": "~1.12.3",
     "commander": "^2.9.0",
     "debug": "^2.2.0",
     "opn": "^3.0.3",
