@@ -8,7 +8,7 @@
   ],
   "description": "HTML custom elements for dataflow graph editing",
   "dependencies": {
-    "the-graph": "0.3.11"
+    "the-graph": "0.6.1"
   },
   "main": "the-graph/the-graph.html",
   "license": "MIT",

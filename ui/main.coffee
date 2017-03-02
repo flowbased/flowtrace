@@ -1,5 +1,4 @@
-flowtrace = require 'flowtrace/src/index' if not flowtrace
-
+flowtrace = window.flowtrace
 React = window.React
 
 # flowtrace UI library
@@ -151,8 +150,8 @@ main = () ->
   console.log 'main'
 
   updateApp = (app) ->
-    React.render (widgets.Timeline {trace: app.trace}), id('scratch')
-    React.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
+    ReactDOM.render (widgets.Timeline {trace: app.trace}), id('scratch')
+    ReactDOM.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
     console.log 'render'
 
   changeTrace = (err, trace) ->

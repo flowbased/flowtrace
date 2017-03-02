@@ -6,9 +6,9 @@
 
     <!-- flowtrace UI stuffs -->
     <link rel="stylesheet" href="./main.css">
-    <script src="./main.coffee" type="text/coffeescript"></script>
 
-    <script src="https://fb.me/react-0.13.2.js"></script>
+    <script src="/browser/flowtrace-ui.js"></script>
+    <script src="./main.coffee" type="text/coffeescript"></script>
 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
     <script src="http://visjs.org/dist/vis.js"></script>
@@ -19,17 +19,14 @@
     <script src="./grapheditor.coffee" type="text/coffeescript"></script>
 
     <script src="../bower_components/webcomponentsjs/webcomponents.js"></script>
-    <script src="../bower_components/react/react-with-addons.js"></script>
     <script src="../bower_components/klayjs-noflo/klay-noflo.js"></script>
     <script src="../bower_components/hammerjs/hammer.min.js"></script>
     <script src="../bower_components/ease-djdeath/index.js"></script>
     <script src="../bower_components/react.animate-djdeath/react.animate.js"></script>
-    <!-- Browserify Libraries -->
-    <script src="../build/noflo.js"></script>
     <!-- Custom elements -->
     <link rel="import" href="../bower_components/polymer/polymer.html">
-    <link rel="import" href="../bower_components/the-graph/the-graph-editor/the-graph-editor.html">
-    <link rel="import" href="../bower_components/the-graph/the-graph-nav/the-graph-nav.html">
+    <link rel="import" href="../node_modules/the-graph/the-graph-editor/the-graph-editor.html">
+    <link rel="import" href="../node_modules/the-graph/the-graph-nav/the-graph-nav.html">
     <!-- Fonts -->
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400' rel='stylesheet' type='text/css'>
