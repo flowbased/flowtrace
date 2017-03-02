@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-- '4'
-before_script:
-- npm install -g grunt-cli
+- '6'
+before_install:
+- npm install -g grunt-cli bower
 sudo: false
 deploy:
   provider: npm

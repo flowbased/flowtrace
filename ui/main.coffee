@@ -1,5 +1,4 @@
-flowtrace = require 'flowtrace/src/index' if not flowtrace
-
+flowtrace = window.flowtrace
 React = window.React
 
 # flowtrace UI library
@@ -14,7 +13,7 @@ class DetailsClass
     else
       data = ''
 
-    textarea { className: 'data', readOnly: true, spellcheck: false }, data
+    textarea { className: 'data', readOnly: true, spellCheck: false, value: data }
 
 widgets.Details = React.createFactory DetailsClass
 
@@ -151,8 +150,8 @@ main = () ->
   console.log 'main'
 
   updateApp = (app) ->
-    React.render (widgets.Timeline {trace: app.trace}), id('scratch')
-    React.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
+    ReactDOM.render (widgets.Timeline {trace: app.trace}), id('scratch')
+    ReactDOM.render (widgets.Details {trace: app.trace, selection: app.selection}), id('details')
     console.log 'render'
 
   changeTrace = (err, trace) ->
@@ -177,9 +176,9 @@ main = () ->
     reader.readAsText(file)
 
   loadDefault = () ->
-    defaultTrace = '/11581-17566-19lvg3o.json'
+    defaultTrace = '/spec/fixtures/hangdrum.trace.json'
     flowtrace.trace.loadHttp defaultTrace, changeTrace
-  setTimeout loadDefault, 100
+  #setTimeout loadDefault, 100
   console.log 'main done'
 
 main()

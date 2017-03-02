@@ -26,18 +26,17 @@ module.exports = ->
         browserifyOptions:
           extensions: ['.coffee', '.js']
           ignoreMissing: true
-          standalone: 'fbpspec'
+          standalone: 'flowtrace'
       lib:
         files:
           'browser/flowtrace.js': ['src/index.coffee']
-
       uilibs:
         files:
-          'build/noflo.js': ['ui/browserify.js']
+          'browser/flowtrace-ui.js': ['ui/dependencies.js']
         options:
           transform: ['coffeeify']
           browserifyOptions:
-            require: 'noflo'
+            require: 'the-graph'
 
     'bower-install-simple':
       deps:
@@ -45,12 +44,6 @@ module.exports = ->
           interactive: false
           forceLatest: false
           directory: 'bower_components'
-
-    # Browser build of the client lib
-    noflo_browser:
-      build:
-        files:
-          'browser/flowtrace.js': ['component.json']
 
     watch:
       src:
@@ -114,7 +107,6 @@ module.exports = ->
   #@loadNpmTasks 'grunt-yaml'
   @loadNpmTasks 'grunt-browserify'
   @loadNpmTasks 'grunt-bower-install-simple'
-  @loadNpmTasks 'grunt-noflo-browser'
   @loadNpmTasks 'grunt-contrib-watch'
 
   # Grunt plugins used for testing
@@ -133,12 +125,11 @@ module.exports = ->
   # Our local tasks
   @registerTask 'build-ui', 'Build UI', (target = 'all') =>
     @task.run 'bower-install-simple'
-    @task.run 'browserify:uilibs'
 
-  @registerTask 'build', 'Build', (target = 'all') =>
-    @task.run 'build-ui'
-    @task.run 'browserify'
-    @task.run 'noflo_browser'
+  @registerTask 'build', 'Build', [
+    'build-ui'
+    'browserify'
+  ]
 
   @registerTask 'test', 'Build and run tests', (target = 'all') =>
     @task.run 'coffeelint'
