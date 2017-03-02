@@ -1,24 +1,7 @@
 {
-  "name": "the-graph",
-  "version": "0.3.11",
-  "keywords": [
-    "graph",
-    "flow",
-    "noflo"
-  ],
-  "description": "HTML custom elements for dataflow graph editing",
+  "name": "flowtrace-ui",
+  "description": " !!!! DO NOT ADD DEPENDENCIES HERE. USE NPM INSTEAD. !!!!! ",
   "dependencies": {
-    "the-graph": "0.6.1"
-  },
-  "main": "the-graph/the-graph.html",
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "docs",
-    "tools"
-  ]
+    "polymer": "0.5.2"
+  }
 }

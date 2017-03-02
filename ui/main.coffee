@@ -13,7 +13,7 @@ class DetailsClass
     else
       data = ''
 
-    textarea { className: 'data', readOnly: true, spellcheck: false }, data
+    textarea { className: 'data', readOnly: true, spellCheck: false, value: data }
 
 widgets.Details = React.createFactory DetailsClass
 
@@ -176,9 +176,9 @@ main = () ->
     reader.readAsText(file)
 
   loadDefault = () ->
-    defaultTrace = '/11581-17566-19lvg3o.json'
+    defaultTrace = '/spec/fixtures/hangdrum.trace.json'
     flowtrace.trace.loadHttp defaultTrace, changeTrace
-  setTimeout loadDefault, 100
+  #setTimeout loadDefault, 100
   console.log 'main done'
 
 main()
