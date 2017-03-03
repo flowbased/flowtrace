@@ -36,13 +36,53 @@ Search & filter
 Testing
 
 - See start/end markers of test runs
-- See how a particular test run failed. Compare actual values on edge, with 
+- See how a particular test run failed. Compare actual values on edge, with expected
 - Compare edge data for two different test runs
 
-Breakpoints
+Data recording
 
+- Ability to control which edges data is being collected on
 - Ability to configure data-breakpoints on edge, triggered by runtime
-- 
+
+# Minimum for Flowhub 0.15 parity
+
+* Can add selected edged to timeline
+* Can remove an edge from timeline
+* Timeline can show when data packets happen
+* Can scroll viewport of timeline forward and backwards
+* Packets are shown in real-time as they come in, if viewport is not looking at past
+* Can see the data of two different edges simultaniously, for comparison
+* (maybe) short data is shown as text inline in timeline?
+* (maybe) can clear the data manually. 
+
+Maybe add/remove should be "favoriting", ie it puts the trace up top of timeline results. But other traces still visible further down.
+In future it might be nice to control "recording" state separately.
+
+# Datastructure
+
+Viewport
+  width: pixels
+  height: pixels
+  start: Date
+  end: Date
+
+DataSeries
+  events: [ Event ], sorted in time
+  edge: FbpEdge
+  favorite: true/false
+
+Event
+  type: 'data'|'endgroup'|'begingroup'
+  payload: ...
+
+Config:
+  datadot.width
+  series.height
+
+In
+  series: [ DataSeries ]
+  viewport: Viewport
+  config: Config
 
 # Validation
 
