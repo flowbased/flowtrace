@@ -1,6 +1,7 @@
 
 common = require './common'
 
+fs = require 'fs'
 debug = require('debug')('flowtrace:performance')
 
 
@@ -134,7 +135,6 @@ renderTimeline = (graph, times) ->
   flows = flows.sort (a, b) -> a.length > b.length
   flow = flows[0] # longest
 
-
   pretty = flow.map (c) -> "#{c.src.process}.#{c.src.port} -> #{c.tgt.process}.#{c.tgt.port}"
   debug 'rendering flow', pretty
 
@@ -145,18 +145,11 @@ renderTimeline = (graph, times) ->
   return output
 
 main = () ->
-  [_node, _script, graphfile] = process.argv
+  [_node, _script, graphfile, timefile] = process.argv
 
-  # TODO: accept times on commandline
-  times =
-    'pre': 1.00
-    'queue': 2.50
-    'download': 0.50
-    'scale': 0.50
-    'calc': 2.50
-    'load': 2.50
-    'save': 0.20
-    'uploadOutput': 0.2
+  if process.argv.length < 4
+    console.log 'Usage: graph.fbp times.json'
+    process.exit 1
 
   callback = (err, result) ->
     if err
@@ -170,7 +163,15 @@ main = () ->
 
   common.readGraphFile graphfile, {}, (err, graph) ->
     return callback err if err
-    out = renderTimeline graph, times
-    return callback null, out
+    fs.readFile timefile, (err, contents) ->
+      return callback err if err
+
+      try
+        times = JSON.parse contents
+      catch e
+        return callback e
+
+      out = renderTimeline graph, times
+      return callback null, out
 
 main() if not module.parent
