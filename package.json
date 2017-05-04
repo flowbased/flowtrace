@@ -27,11 +27,11 @@
     "url": "https://github.com/flowbased/flowtrace.git"
   },
   "dependencies": {
-    "cli-color": "~1.1.0",
+    "cli-color": "~1.2.0",
     "coffee-script": "~1.12.2",
     "commander": "^2.9.0",
     "debug": "^2.2.0",
-    "opn": "^4.0.2",
+    "opn": "^5.0.0",
     "tv4": "^1.2.7",
     "websocket": "^1.0.21"
   },
