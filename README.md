@@ -1,6 +1,8 @@
 
 # Flowtrace
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/flowbased/flowtrace.svg)](https://greenkeeper.io/)
+
 A `flowtrace` is a persisted record of the execution of an Flow-based Programming (FBP) or dataflow program.
 It is used for retroactive (after-the-fact) debugging; to locate, understand and fix bugs. 
 
