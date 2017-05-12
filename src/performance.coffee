@@ -64,10 +64,11 @@ renderFlow = (flow, times) ->
 
   style =
     baseHeight: 20
+    baseWidth: 600
     dividerHeightFraction: 0.2
     divider: "stroke:#000000;stroke-opacity:1"
     rect: "fill:#77cdb8;fill-opacity:1"
-    unitSeconds: 100
+    unitSeconds: 0.100
   style.dividerHeight = style.baseHeight*(1+style.dividerHeightFraction)
 
 
@@ -95,7 +96,7 @@ renderFlow = (flow, times) ->
     weight = weights[p]
     debug 'weight', p, weight
 
-    width = times[p] * style.unitSeconds
+    width = style.baseWidth * times[p]/style.unitSeconds  
     height = style.baseHeight
     nextPos = xPos + width
     rect = svg.node 'rect', { x: xPos, y: yPos, width: width, height: height, style: style.rect }
