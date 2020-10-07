@@ -27,6 +27,7 @@
     "url": "https://github.com/flowbased/flowtrace.git"
   },
   "dependencies": {
+    "circular-buffer": "^1.0.2",
     "cli-color": "~2.0.0",
     "coffee-script": "~1.12.2",
     "commander": "^6.1.0",
