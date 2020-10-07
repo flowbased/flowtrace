@@ -3,3 +3,4 @@ components/
 browser/
 bower_components/
 build/
+package-lock.json

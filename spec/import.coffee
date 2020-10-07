@@ -1,2 +1,0 @@
-
-flowtrace = require '..'
