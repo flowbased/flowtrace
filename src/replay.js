@@ -32,55 +32,46 @@ const replayEvents = function (flowtrace, sendFunc, callback) {
   return callback(null);
 };
 
-const sendGraphs = function (flowtrace, sendFunc, callback) {
-  const graphs = flowtrace.header != null ? flowtrace.header.graphs : undefined;
-  debug('sendgraphs', Object.keys(graphs));
-
-  const runtime = {
-    sendGraph(cmd, payload) {
-      return sendFunc({ protocol: 'graph', command: cmd, payload });
+const sendError = function (protocol, error, sendFunc) {
+  sendFunc({
+    protocol,
+    command: 'error',
+    payload: {
+      ...error,
     },
-  };
-
-  Object.keys(graphs).forEach((name) => {
-    const graph = graphs[name];
-    graph.name = name;
-    protocol.sendGraph(graph, runtime, (err) => {
-      if (err) { return callback(err); }
-    });
-  }); // FIXME: assumes sync
-
-  return callback(null);
+  });
 };
 
 const sendComponents = function (flowtrace, sendFunc, callback) {
   // XXX: should the trace also store component info??
-  // maybe optional. If optional, should graph also be?
-
+  // maybe optional.
   // TODO: Synthesize from graph and send
+
+  // Send all graphs as components
   return callback(null);
 };
 
-const sendMainGraphSource = function (flowtrace, sendFunc) {
+const sendGraphSource = function (flowtrace, graphName, sendFunc) {
   // FIXME: get rid of this workaround for https://github.com/noflo/noflo-ui/issues/390
 
-  const graphs = flowtrace.header != null ? flowtrace.header.graphs : undefined;
-  if (!graphs || (graphs.length < 1)) { throw new Error('Trace file has no graphs in header'); }
-  const graphNames = Object.keys(graphs);
-  if (graphNames.length !== 1) { console.log(`WARNING: Trace file had multiple graphs, chose first one: ${graphNames}`); }
-  const mainGraph = graphs[graphNames[0]];
-
-  // TODO: specify main graph in trace file
-  // MAYBE: allow to override main graph (on commandline)?
-
-  const code = JSON.stringify(mainGraph, null, 2);
-  const info = {
-    name: 'main',
-    library: 'default',
+  const graphs = flowtrace.header != null ? flowtrace.header.graphs : {};
+  const currentGraph = graphs[graphName];
+  if (!currentGraph) {
+    sendError('component', new Error(`Graph ${graphName} not found`), sendFunc);
+    return;
+  }
+  const [library, name] = graphName.split('/');
+  const payload = {
+    name,
+    library,
     language: 'json',
-    code,
+    code: JSON.stringify(currentGraph, null, 2),
   };
-  return sendFunc({ protocol: 'component', command: 'source', payload: info });
+  sendFunc({
+    protocol: 'component',
+    command: 'source',
+    payload,
+  });
 };
 
 const flowhubLiveUrl = function (options) {
@@ -204,7 +195,7 @@ exports.main = function () {
     } if ((protocol === 'component') && (command === 'list')) {
       sendComponents(mytrace, send, () => {});
     } else if ((protocol === 'component') && (command === 'getsource')) {
-      sendMainGraphSource(mytrace, send);
+      sendGraphSource(mytrace, payload.name, send);
     } else if (knownUnsupportedCommands(protocol, command)) {
       // ignored
     } else {

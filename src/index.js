@@ -7,6 +7,4 @@ module.exports = {
   replay: require('./replay'),
   // eslint-disable-next-line global-require
   common: require('./common'),
-  // eslint-disable-next-line global-require
-  protocol: require('./protocol'),
 };

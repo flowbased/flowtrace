@@ -2,7 +2,7 @@
   "name": "flowtrace",
   "version": "0.0.12",
   "description": "Tracing format tools for FBP",
-  "main": "index.js",
+  "main": "src/index.js",
   "bin": {
     "flowtrace-show": "./bin/flowtrace-show",
     "flowtrace-replay": "./bin/flowtrace-replay"
@@ -31,26 +31,24 @@
     "coffee-script": "~1.12.2",
     "commander": "^2.9.0",
     "debug": "^3.0.0",
+    "fbp": "^1.7.0",
+    "isomorphic-fetch": "^3.0.0",
     "opn": "^5.0.0",
     "tv4": "^1.2.7",
     "websocket": "^1.0.21"
   },
   "devDependencies": {
-    "coffeeify": "^2.1.0",
-    "coffeelint": "^2.0.0",
-    "grunt": "^1.0.1",
-    "grunt-bower-install-simple": "^1.1.4",
-    "grunt-browserify": "^5.0.0",
-    "grunt-coffeelint": "0.0.16",
-    "grunt-contrib-coffee": "^1.0.0",
-    "grunt-contrib-connect": "^1.0.2",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-mocha-test": "^0.13.2",
-    "mocha": "^5.0.0",
-    "klayjs-noflo": "^0.3.1",
-    "the-graph": "^0.7.0"
+    "chai": "^4.0.0",
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-chai": "0.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mocha": "^8.0.0",
+    "mocha": "^8.1.3"
   },
   "scripts": {
-    "test": "grunt test"
+    "lint": "eslint src spec",
+    "pretest": "npm run lint",
+    "test": "mocha spec/*.js"
   }
 }
