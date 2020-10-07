@@ -37,7 +37,7 @@ const sendError = function (protocol, error, sendFunc) {
     protocol,
     command: 'error',
     payload: {
-      ...error,
+      message: error.message,
     },
   });
 };
@@ -60,7 +60,11 @@ const sendGraphSource = function (flowtrace, graphName, sendFunc) {
     sendError('component', new Error(`Graph ${graphName} not found`), sendFunc);
     return;
   }
-  const [library, name] = graphName.split('/');
+  let library;
+  let name = graphName;
+  if (graphName.indexOf('/') !== -1) {
+    [library, name] = graphName.split('/');
+  }
   const payload = {
     name,
     library,
@@ -89,6 +93,20 @@ const flowhubLiveUrl = function (options) {
 };
 
 const knownUnsupportedCommands = (p, c) => (p === 'network') && (c === 'debug');
+
+function mainGraphName(flowtrace) {
+  let mainGraph = 'default/main';
+  if (!flowtrace.header) {
+    return mainGraph;
+  }
+  if (flowtrace.header.graphs && Object.keys(flowtrace.header.graphs).length) {
+    return Object.keys(flowtrace.header.graphs)[0];
+  }
+  if (flowtrace.header.metadata && flowtrace.header.metadata.main) {
+    mainGraph = flowtrace.header.metadata.main;
+  }
+  return mainGraph;
+}
 
 function discoverHost(preferredInterface) {
   const ifaces = os.networkInterfaces();
@@ -156,6 +174,7 @@ exports.main = function () {
 
   runtime.receive = (protocol, command, payload, context) => {
     let status = {
+      graph: mainGraphName(mytrace),
       started: false,
       running: false,
     };
@@ -178,7 +197,7 @@ exports.main = function () {
         version: '0.5',
         capabilities,
         allCapabilities: capabilities,
-        graph: 'default/main', // HACK, so Flowhub will ask for our graph
+        graph: mainGraphName(mytrace),
       };
       runtime.send('runtime', 'runtime', info, context);
       return;
