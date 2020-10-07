@@ -1,21 +1,30 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
+const fbp = require('fbp');
+const path = require('path');
 
-let readGraph;
-exports.isBrowser = function() {
+exports.randomString = function (n) {
+  let idx;
+  let j;
+  let ref;
+  let text = '';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (j = 0, ref = n; ref >= 0 ? j < ref : j > ref; ref >= 0 ? j += 1 : j -= 1) {
+    idx = Math.floor(Math.random() * possible.length);
+    text += possible.charAt(idx);
+  }
+
+  return text;
+};
+
+exports.isBrowser = function isBrowser() {
   if ((typeof process !== 'undefined') && process.execPath && process.execPath.match(/node|iojs/)) {
     return false;
   }
   return true;
 };
 
-exports.readGraph = (readGraph = function(contents, type, options) {
+exports.readGraph = function readGraph(contents, type, options) {
   let graph;
-  const fbp = require('fbp');
   if (type === 'fbp') {
     graph = fbp.parse(contents, { caseSensitive: options.caseSensitive });
   } else if (type === 'object') {
@@ -29,19 +38,18 @@ exports.readGraph = (readGraph = function(contents, type, options) {
   if ((graph.outports == null)) { graph.outports = {}; }
 
   return graph;
-});
+};
 
 // node.js only
-exports.readGraphFile = function(filepath, options, callback) {
+exports.readGraphFile = function readGraphFile(filepath, options, callback) {
+  // eslint-disable-next-line global-require
   const fs = require('fs');
-  const path = require('path');
-
   const type = path.extname(filepath).replace('.', '');
-  return fs.readFile(filepath, { encoding: 'utf-8' }, function(err, contents) {
+  return fs.readFile(filepath, { encoding: 'utf-8' }, (err, contents) => {
     let graph;
     if (err) { return callback(err); }
     try {
-      graph = readGraph(contents, type, options);
+      graph = exports.readGraph(contents, type, options);
     } catch (e) {
       return callback(e);
     }
