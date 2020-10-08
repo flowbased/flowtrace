@@ -1,6 +1,6 @@
 const clc = require('cli-color');
 const ansiStrip = require('cli-color/strip');
-const trace = require('./trace');
+const trace = require('../lib/trace');
 
 const connectionId = function (data) {
   const { src, tgt } = data;

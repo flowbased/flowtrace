@@ -1,5 +1,5 @@
 const debug = require('debug')('flowtrace:performance');
-const { readGraphFile } = require('./common');
+const { readGraphFile } = require('../lib/common');
 
 const svg = {
   node(type, attributes, children) {

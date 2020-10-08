@@ -4,7 +4,7 @@ const os = require('os');
 const open = require('opn');
 const http = require('http');
 const debug = require('debug')('flowtrace:replay');
-const trace = require('./trace');
+const trace = require('../lib/trace');
 const websocket = require('./websocket');
 
 const connectionId = function (conn) {
