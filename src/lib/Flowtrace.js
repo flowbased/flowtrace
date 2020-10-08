@@ -1,7 +1,9 @@
 const CircularBuffer = require('circular-buffer');
+const { EventEmitter } = require('events');
 
-class Flowtrace {
+class Flowtrace extends EventEmitter {
   constructor(metadata, bufferSize = 400) {
+    super();
     this.events = new CircularBuffer(bufferSize);
     this.graphs = {};
     this.metadata = {
@@ -9,6 +11,18 @@ class Flowtrace {
       start: new Date(),
     };
     this.mainGraph = null;
+    this.subscribe();
+  }
+
+  subscribe() {
+    this.on('event', (event, payload, graph) => {
+      this.events.enq({
+        event,
+        payload,
+        graph,
+        time: new Date(),
+      });
+    });
   }
 
   addGraph(graphName, graph, main = false) {
@@ -19,51 +33,30 @@ class Flowtrace {
   }
 
   addNetworkPacket(type, src, tgt, graph, payload) {
-    this.events.enq({
-      type,
-      data: {
-        ...payload,
-        src,
-        tgt,
-      },
-      graph,
-      time: new Date(),
-    });
+    this.emit('event', type, {
+      ...payload,
+      src,
+      tgt,
+    }, graph);
   }
 
   addNetworkStarted(graph) {
-    this.events.enq({
-      type: 'network:started',
-      graph,
-      time: new Date(),
-    });
+    this.emit('event', 'network:started', {}, graph);
   }
 
   addNetworkStopped(graph) {
-    this.events.enq({
-      type: 'network:stopped',
-      graph,
-      time: new Date(),
-    });
+    this.emit('event', 'network:stopped', {}, graph);
   }
 
   addNetworkError(graph, error) {
-    this.events.enq({
-      type: 'network:error',
-      graph,
-      error,
-      time: new Date(),
-    });
+    this.emit('event', 'network:stopped', error, graph);
   }
 
   addNetworkIcon(graph, node, icon) {
-    this.events.enq({
-      type: 'network:icon',
-      graph,
+    this.emit('event', 'network:icon', {
       node,
       icon,
-      time: new Date(),
-    });
+    }, graph);
   }
 
   toJSON() {
@@ -76,7 +69,12 @@ class Flowtrace {
         graphs: this.graphs,
         main: this.mainGraph,
       },
-      events: this.events.toArray(),
+      events: this.events.toArray().map((event) => ({
+        ...event.payload,
+        type: event.event,
+        graph: event.graph,
+        time: event.time,
+      })),
     };
   }
 }
