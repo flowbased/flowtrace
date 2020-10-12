@@ -18,6 +18,20 @@ const connectionId = function (conn) {
   return `${src} -> ${conn.tgt.port.toUpperCase()} ${conn.tgt.node}()`;
 };
 
+function mainGraphName(flowtrace) {
+  let mainGraph = 'default/main';
+  if (!flowtrace.header) {
+    return mainGraph;
+  }
+  if (flowtrace.header.graphs && Object.keys(flowtrace.header.graphs).length) {
+    return Object.keys(flowtrace.header.graphs)[0];
+  }
+  if (flowtrace.header.metadata && flowtrace.header.metadata.main) {
+    mainGraph = flowtrace.header.metadata.main;
+  }
+  return mainGraph;
+}
+
 const replayEvents = function (flowtrace, sendFunc, callback) {
   flowtrace.events.forEach((event) => {
     sendFunc({
@@ -25,7 +39,7 @@ const replayEvents = function (flowtrace, sendFunc, callback) {
       payload: {
         ...event.payload,
         id: connectionId(event.payload),
-        graph: 'default/main', // HACK
+        graph: event.graph || mainGraphName(flowtrace),
       },
     });
   });
@@ -93,20 +107,6 @@ const flowhubLiveUrl = function (options) {
 };
 
 const knownUnsupportedCommands = (p, c) => (p === 'network') && (c === 'debug');
-
-function mainGraphName(flowtrace) {
-  let mainGraph = 'default/main';
-  if (!flowtrace.header) {
-    return mainGraph;
-  }
-  if (flowtrace.header.graphs && Object.keys(flowtrace.header.graphs).length) {
-    return Object.keys(flowtrace.header.graphs)[0];
-  }
-  if (flowtrace.header.metadata && flowtrace.header.metadata.main) {
-    mainGraph = flowtrace.header.metadata.main;
-  }
-  return mainGraph;
-}
 
 function discoverHost(preferredInterface) {
   const ifaces = os.networkInterfaces();
