@@ -1,0 +1,46 @@
+{
+ "header": {
+  "graphs": {
+    "helloworld": {
+      "caseSensitive": false,
+      "properties": {
+        "name": "helloworld"
+      },
+      "inports": {},
+      "outports": {},
+      "groups": [],
+      "processes": {
+        "repeat": {
+          "component": "core/Repeat",
+          "metadata": {}
+        },
+        "stdout": {
+          "component": "core/Output",
+          "metadata": {}
+        }
+      },
+      "connections": [
+        {
+          "src": {
+            "process": "repeat",
+            "port": "out"
+          },
+          "tgt": {
+            "process": "stdout",
+            "port": "in"
+          }
+        },
+        {
+          "data": "hello world",
+          "tgt": {
+            "process": "repeat",
+            "port": "in"
+          }
+        }
+      ]
+    }
+  }
+}
+, "events":
+[]
+ }

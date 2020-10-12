@@ -4,7 +4,7 @@ const os = require('os');
 const open = require('opn');
 const http = require('http');
 const debug = require('debug')('flowtrace:replay');
-const trace = require('./trace');
+const trace = require('../lib/trace');
 const websocket = require('./websocket');
 
 const connectionId = function (conn) {
@@ -18,6 +18,20 @@ const connectionId = function (conn) {
   return `${src} -> ${conn.tgt.port.toUpperCase()} ${conn.tgt.node}()`;
 };
 
+function mainGraphName(flowtrace) {
+  let mainGraph = 'default/main';
+  if (!flowtrace.header) {
+    return mainGraph;
+  }
+  if (flowtrace.header.graphs && Object.keys(flowtrace.header.graphs).length) {
+    return Object.keys(flowtrace.header.graphs)[0];
+  }
+  if (flowtrace.header.metadata && flowtrace.header.metadata.main) {
+    mainGraph = flowtrace.header.metadata.main;
+  }
+  return mainGraph;
+}
+
 const replayEvents = function (flowtrace, sendFunc, callback) {
   flowtrace.events.forEach((event) => {
     sendFunc({
@@ -25,7 +39,7 @@ const replayEvents = function (flowtrace, sendFunc, callback) {
       payload: {
         ...event.payload,
         id: connectionId(event.payload),
-        graph: 'default/main', // HACK
+        graph: event.graph || mainGraphName(flowtrace),
       },
     });
   });
@@ -37,7 +51,7 @@ const sendError = function (protocol, error, sendFunc) {
     protocol,
     command: 'error',
     payload: {
-      ...error,
+      message: error.message,
     },
   });
 };
@@ -60,7 +74,11 @@ const sendGraphSource = function (flowtrace, graphName, sendFunc) {
     sendError('component', new Error(`Graph ${graphName} not found`), sendFunc);
     return;
   }
-  const [library, name] = graphName.split('/');
+  let library;
+  let name = graphName;
+  if (graphName.indexOf('/') !== -1) {
+    [library, name] = graphName.split('/');
+  }
   const payload = {
     name,
     library,
@@ -156,6 +174,7 @@ exports.main = function () {
 
   runtime.receive = (protocol, command, payload, context) => {
     let status = {
+      graph: mainGraphName(mytrace),
       started: false,
       running: false,
     };
@@ -178,7 +197,7 @@ exports.main = function () {
         version: '0.5',
         capabilities,
         allCapabilities: capabilities,
-        graph: 'default/main', // HACK, so Flowhub will ask for our graph
+        graph: mainGraphName(mytrace),
       };
       runtime.send('runtime', 'runtime', info, context);
       return;

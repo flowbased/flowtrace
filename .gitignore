@@ -4,3 +4,4 @@ browser/
 bower_components/
 build/
 package-lock.json
+.nyc_output/
