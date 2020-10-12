@@ -29,7 +29,6 @@
   "dependencies": {
     "circular-buffer": "^1.0.2",
     "cli-color": "~2.0.0",
-    "coffee-script": "~1.12.2",
     "commander": "^6.1.0",
     "debug": "^4.2.0",
     "fbp": "^1.7.0",
