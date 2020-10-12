@@ -69,7 +69,7 @@ class Flowtrace extends EventEmitter {
         graphs: this.graphs,
         main: this.mainGraph,
       },
-      events: this.events.toArray().map((event) => ({
+      events: this.events.toarray().map((event) => ({
         ...event.payload,
         type: event.event,
         graph: event.graph,
