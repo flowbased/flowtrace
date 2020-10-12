@@ -1,7 +1,4 @@
+## 0.1.0 (2020-10-12)
 
-# 0.1 - unreleased
-
-* flowtrace-show: Show events in flowtrace file as text
-* flowtrace-replay: Replay events in flowtrace file as live FBP runtime.
-Allows using Flowhub with traces.
-Can automatically open browser to Flowhub.
+* Ported from CoffeeScript tp modern ES6
+* Added a Flowtrace base library to make capturing traces easier to runtimes
