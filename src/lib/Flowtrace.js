@@ -1,4 +1,5 @@
 const CircularBuffer = require('circular-buffer');
+const clone = require('clone');
 const { EventEmitter } = require('events');
 
 class Flowtrace extends EventEmitter {
@@ -18,7 +19,7 @@ class Flowtrace extends EventEmitter {
     this.on('event', (event, payload, graph) => {
       this.events.enq({
         event,
-        payload,
+        payload: clone(payload),
         graph,
         time: new Date(),
       });
