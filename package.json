@@ -33,6 +33,7 @@
     "commander": "^6.1.0",
     "debug": "^4.2.0",
     "fbp": "^1.7.0",
+    "fbp-graph": "^0.4.0",
     "isomorphic-fetch": "^3.0.0",
     "opn": "^6.0.0",
     "tv4": "^1.2.7",
