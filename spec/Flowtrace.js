@@ -13,4 +13,14 @@ describe('Flowtrace class', () => {
     chai.expect(json.header.metadata.type).to.equal('example');
     chai.expect(json.events).to.eql([]);
   });
+  it('should be possible to register a packet', () => {
+    tracer.addNetworkPacket('data', {}, {}, 'default/main', {
+      data: true,
+    });
+  });
+  it('should be possible to serialize to JSON', () => {
+    const json = tracer.toJSON();
+    chai.expect(json.header.metadata.type).to.equal('example');
+    chai.expect(json.events.length).to.eql(1);
+  });
 });
