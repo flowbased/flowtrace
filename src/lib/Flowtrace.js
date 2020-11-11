@@ -35,7 +35,7 @@ class Flowtrace extends EventEmitter {
 
   addNetworkPacket(type, src, tgt, graph, payload) {
     this.emit('event', type, {
-      ...payload,
+      payload,
       src,
       tgt,
     }, graph);
