@@ -124,7 +124,7 @@ class FlowtraceRecorder {
       return Promise.resolve();
     }
     this.fbpClient.removeListener('signal', this.handleSignal(graph));
-    // TODO: Mark Flowtrace as ended
+    this.traces[graph].metadata.end = new Date();
     return Promise.resolve();
   }
 
