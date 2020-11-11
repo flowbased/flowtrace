@@ -88,7 +88,11 @@ class FlowtraceRecorder {
       }
       const event = `${signal.protocol}:${signal.command}`;
       switch (event) {
-        case 'network:data': {
+        case 'network:connect':
+        case 'network:begingroup':
+        case 'network:data':
+        case 'network:endgroup':
+        case 'network:disconnect': {
           tracer.addNetworkPacket(
             event,
             signal.payload.src,
@@ -96,6 +100,14 @@ class FlowtraceRecorder {
             signal.payload.graph,
             signal.payload,
           );
+          break;
+        }
+        case 'network:error': {
+          tracer.addNetworkError(signal.payload.graph, signal.payload);
+          break;
+        }
+        case 'network:icon': {
+          tracer.addNetworkIcon(signal.payload.graph, signal.payload.id, signal.payload.icon);
           break;
         }
         default: {
