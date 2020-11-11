@@ -35,7 +35,7 @@ const renderText = function (msg, options = {}) {
       case 'endgroup': return `${identifier(data)} ${clc.cyan(`> ${data.group}`)}`;
       case 'data':
         if (options.verbose) {
-          return `${identifier(data)} ${clc.green('DATA')} ${data.data}`;
+          return `${identifier(data)} ${clc.green('DATA')} ${JSON.stringify(data.data)}`;
         }
         return `${identifier(data)} ${clc.green('DATA')}`;
 
