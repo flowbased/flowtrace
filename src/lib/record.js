@@ -14,6 +14,26 @@ function loadGraph(source) {
   });
 }
 
+function filterGraphs(main, graphs) {
+  let filtered = [];
+  const mainGraph = graphs.find((g) => g.name === main);
+  if (!mainGraph) {
+    return filtered;
+  }
+  filtered.push(mainGraph);
+  const graphNames = graphs.map((g) => g.name);
+  Object.keys(mainGraph.processes).forEach((nodeId) => {
+    const node = mainGraph.processes[nodeId];
+    const graphIdx = graphNames.indexOf(node.component);
+    if (graphIdx === -1) {
+      // Not a subgraph
+      return;
+    }
+    filtered = filtered.concat(filterGraphs(node.component, graphs));
+  });
+  return filtered;
+}
+
 function loadGraphs(fbpClient, tracer, mainGraph) {
   // TODO: Instead of fetching all subgraphs, might be more
   // efficient to load the main graph, and then recurse
@@ -30,15 +50,23 @@ function loadGraphs(fbpClient, tracer, mainGraph) {
         }
         return true;
       });
-      return Promise.all(graphsMissing.map((graphName) => fbpClient
-        .protocol.component.getsource({
-          name: graphName,
-        })
-        .then(loadGraph)
-        .then((graphDefinition) => {
-          const main = (graphName === mainGraph);
-          tracer.addGraph(graphName, graphDefinition, main);
-        })));
+      return Promise.all(graphsMissing
+        .map((graphName) => fbpClient
+          .protocol.component.getsource({
+            name: graphName,
+          })
+          .then(loadGraph)
+          .then((graphDefinition) => {
+            graphDefinition.name = graphName;
+            return graphDefinition;
+          })))
+        .then((graphs) => {
+          const filtered = filterGraphs(mainGraph, graphs);
+          filtered.forEach((graphDefinition) => {
+            const main = (graphDefinition.name === mainGraph);
+            tracer.addGraph(graphDefinition.name, graphDefinition, main);
+          });
+        });
     });
 }
 
