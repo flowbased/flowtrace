@@ -81,11 +81,21 @@ class FlowtraceRecorder {
     if (this.signalHandlers[graph]) {
       return this.signalHandlers[graph];
     }
-    const handler = (payload) => {
-      if (payload.graph !== graph) {
+    const tracer = this.traces[graph];
+    const handler = (signal) => {
+      if (signal.payload.graph !== graph) {
         return;
       }
-      console.log(payload);
+      const event = `${signal.protocol}:${signal.command}`;
+      switch (event) {
+        case 'network:data': {
+          tracer.addNetworkPacket(event, signal.payload.src, signal.payload.tgt, signal.payload.graph, signal.payload);
+          return;
+        }
+        default: {
+          // Ignore
+        }
+      }
     };
     this.signalHandlers[graph] = handler;
     return handler;
