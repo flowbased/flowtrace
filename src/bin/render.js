@@ -5,8 +5,8 @@ const trace = require('../lib/trace');
 const connectionId = function (data) {
   const { src, tgt } = data;
 
-  if (src.process) {
-    return `${src.process} ${src.port.toUpperCase()} -> ${tgt.port.toUpperCase()} ${tgt.node}`;
+  if (src) {
+    return `${src.node} ${src.port.toUpperCase()} -> ${tgt.port.toUpperCase()} ${tgt.node}`;
   }
   return `-> ${tgt.port.toUpperCase()} ${tgt.node}`;
 };
