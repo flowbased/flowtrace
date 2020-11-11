@@ -5,8 +5,8 @@ const trace = require('../lib/trace');
 const connectionId = function (data) {
   const { src, tgt } = data;
 
-  if (src.process) {
-    return `${src.process} ${src.port.toUpperCase()} -> ${tgt.port.toUpperCase()} ${tgt.node}`;
+  if (src) {
+    return `${src.node} ${src.port.toUpperCase()} -> ${tgt.port.toUpperCase()} ${tgt.node}`;
   }
   return `-> ${tgt.port.toUpperCase()} ${tgt.node}`;
 };
@@ -35,7 +35,7 @@ const renderText = function (msg, options = {}) {
       case 'endgroup': return `${identifier(data)} ${clc.cyan(`> ${data.group}`)}`;
       case 'data':
         if (options.verbose) {
-          return `${identifier(data)} ${clc.green('DATA')} ${data.data}`;
+          return `${identifier(data)} ${clc.green('DATA')} ${JSON.stringify(data.data)}`;
         }
         return `${identifier(data)} ${clc.green('DATA')}`;
 

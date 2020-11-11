@@ -4,6 +4,8 @@ const os = require('os');
 const open = require('opn');
 const http = require('http');
 const debug = require('debug')('flowtrace:replay');
+const debugReceive = require('debug')('flowtrace:replay:receive');
+const debugSend = require('debug')('flowtrace:replay:send');
 const trace = require('../lib/trace');
 const websocket = require('./websocket');
 
@@ -56,12 +58,99 @@ const sendError = function (protocol, error, sendFunc) {
   });
 };
 
+function addInport(componentDef, portDef) {
+  if (componentDef.inPorts.find((p) => p.id === portDef.id)) {
+    return;
+  }
+  componentDef.inPorts.push(portDef);
+}
+
+function addOutport(componentDef, portDef) {
+  if (componentDef.outPorts.find((p) => p.id === portDef.id)) {
+    return;
+  }
+  componentDef.outPorts.push(portDef);
+}
+
+function componentsFromGraph(components, graph, graphs) {
+  const newComponents = {
+    ...components,
+  };
+  Object.keys(graph.processes).forEach((nodeId) => {
+    const node = graph.processes[nodeId];
+    if (!node.component) {
+      return;
+    }
+    const componentDef = newComponents[node.component] || {
+      name: node.component,
+      icon: 'cog',
+      description: '',
+      subgraph: (Object.keys(graphs).indexOf(node.component) !== -1),
+      inPorts: [],
+      outPorts: [],
+    };
+    Object.keys(graph.inports).forEach((portName) => {
+      const portDef = graph.inports[portName];
+      if (portDef.process !== nodeId) {
+        return;
+      }
+      addInport(componentDef, {
+        id: portDef.port,
+        type: 'all',
+      });
+    });
+    Object.keys(graph.outports).forEach((portName) => {
+      const portDef = graph.outports[portName];
+      if (portDef.process !== nodeId) {
+        return;
+      }
+      addOutport(componentDef, {
+        id: portDef.port,
+        type: 'all',
+      });
+    });
+    graph.connections.forEach((edge) => {
+      if (edge.src && edge.src.process === nodeId) {
+        addOutport(componentDef, {
+          id: edge.src.port,
+          type: 'all',
+        });
+      }
+      if (edge.tgt && edge.tgt.process === nodeId) {
+        addInport(componentDef, {
+          id: edge.tgt.port,
+          type: 'all',
+        });
+      }
+    });
+    newComponents[node.component] = componentDef;
+  });
+  return newComponents;
+}
+
 const sendComponents = function (flowtrace, sendFunc, callback) {
   // XXX: should the trace also store component info??
   // maybe optional.
-  // TODO: Synthesize from graph and send
+  const graphs = flowtrace.header != null ? flowtrace.header.graphs : {};
+  let components = {};
+  Object.keys(graphs).forEach((graph) => {
+    components = componentsFromGraph(components, graphs[graph], graphs);
+  });
+
+  Object.keys(components).forEach((componentName) => {
+    sendFunc({
+      protocol: 'component',
+      command: 'component',
+      payload: components[componentName],
+    });
+  });
 
   // Send all graphs as components
+  sendFunc({
+    protocol: 'component',
+    command: 'componentsready',
+    payload: Object.keys(components).length,
+  });
   return callback(null);
 };
 
@@ -173,52 +262,92 @@ exports.main = function () {
   const runtime = websocket(httpServer, {});
 
   runtime.receive = (protocol, command, payload, context) => {
+    debugReceive(protocol, command, payload);
     let status = {
       graph: mainGraphName(mytrace),
       started: false,
       running: false,
     };
     const updateStatus = (news, event) => {
-      status = news;
+      status = {
+        ...status,
+        ...news,
+      };
       runtime.send('network', event, status, context);
     };
 
-    const send = (e) => runtime.send(e.protocol, e.command, e.payload, context);
+    const send = (e) => {
+      debugSend(e.protocol, e.command, e.payload);
+      runtime.send(e.protocol, e.command, e.payload, context);
+    };
 
-    if ((protocol === 'runtime') && (command === 'getruntime')) {
-      const capabilities = [
-        'protocol:graph', // read-only from client
-        'protocol:component', // read-only from client
-        'protocol:network',
-        'component:getsource',
-      ];
-      const info = {
-        type: 'flowtrace-replay',
-        version: '0.5',
-        capabilities,
-        allCapabilities: capabilities,
-        graph: mainGraphName(mytrace),
-      };
-      runtime.send('runtime', 'runtime', info, context);
-      return;
-      // ignored
-    } if ((protocol === 'network') && (command === 'getstatus')) {
-      runtime.send('network', 'status', status, context);
-      return;
-    } if ((protocol === 'network') && (command === 'start')) {
-      // replay our trace
-      if (!mytrace) { return; }
-      updateStatus({ started: true, running: true }, 'started');
-      replayEvents(mytrace, send, () => updateStatus({ started: true, running: false }, 'stopped'));
-      return;
-    } if ((protocol === 'component') && (command === 'list')) {
-      sendComponents(mytrace, send, () => {});
-    } else if ((protocol === 'component') && (command === 'getsource')) {
-      sendGraphSource(mytrace, payload.name, send);
-    } else if (knownUnsupportedCommands(protocol, command)) {
-      // ignored
-    } else {
-      debug('Warning: Unknown FBP protocol message', protocol, command);
+    switch (`${protocol}:${command}`) {
+      case 'runtime:getruntime': {
+        const capabilities = [
+          'protocol:component', // read-only from client
+          'protocol:network',
+          'component:getsource',
+        ];
+        const info = {
+          type: 'flowtrace-replay',
+          version: '0.5',
+          capabilities,
+          allCapabilities: capabilities,
+          graph: mainGraphName(mytrace),
+        };
+        send({
+          protocol: 'runtime',
+          command: 'runtime',
+          payload: info,
+        });
+        return;
+        // ignored
+      }
+      case 'network:getstatus': {
+        send({
+          protocol: 'network',
+          command: 'status',
+          payload: status,
+        });
+        return;
+      }
+      case 'network:start': {
+        // replay our trace
+        if (!mytrace) { return; }
+        updateStatus({
+          started: true,
+          running: true,
+        }, 'started');
+        replayEvents(mytrace, send, () => updateStatus({
+          started: true,
+          running: false,
+        }, 'stopped'));
+        return;
+      }
+      case 'network:edges': {
+        send({
+          protocol: 'network',
+          command: 'edges',
+          payload: {
+            edges: payload.edges,
+            graph: payload.graph,
+          },
+        });
+        return;
+      }
+      case 'component:list': {
+        sendComponents(mytrace, send, () => { });
+        return;
+      }
+      case 'component:getsource': {
+        sendGraphSource(mytrace, payload.name, send);
+        return;
+      }
+      default: {
+        if (!knownUnsupportedCommands(protocol, command)) {
+          debug('Warning: Unknown FBP protocol message', protocol, command);
+        }
+      }
     }
   };
 

@@ -17,9 +17,7 @@ class WebSocketRuntime {
     context.connection.sendUTF(JSON.stringify({
       protocol,
       command: topic,
-      payload: {
-        ...payload,
-      },
+      payload,
     }));
   }
 
