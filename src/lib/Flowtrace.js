@@ -35,7 +35,7 @@ class Flowtrace extends EventEmitter {
 
   addNetworkPacket(type, src, tgt, graph, payload) {
     this.emit('event', type, {
-      payload,
+      ...payload,
       src,
       tgt,
     }, graph);
@@ -61,21 +61,27 @@ class Flowtrace extends EventEmitter {
   }
 
   toJSON() {
+    const events = this.events.toarray().map((event) => {
+      const [protocol, command] = event.event.split(':');
+      return {
+        protocol,
+        command,
+        payload: event.payload,
+        graph: event.graph,
+        time: event.time,
+      };
+    });
+    events.reverse();
     return {
       header: {
         metadata: {
           ...this.metadata,
-          end: new Date(),
+          end: this.metadata.end || new Date(),
         },
         graphs: this.graphs,
         main: this.mainGraph,
       },
-      events: this.events.toarray().map((event) => ({
-        ...event.payload,
-        type: event.event,
-        graph: event.graph,
-        time: event.time,
-      })),
+      events,
     };
   }
 }
