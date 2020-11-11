@@ -68,11 +68,11 @@ class FlowtraceRecorder {
       .then(() => {
         // Prep trace with runtime metadata
         this.traces[graph] = new Flowtrace({
-          runtime: this.runtime.definition.id,
-          type: this.runtime.definition.type,
-          address: this.runtime.definition.address,
-          repository: this.runtime.definition.repository,
-          repositoryVersion: this.runtime.definition.repositoryVersion,
+          runtime: this.fbpClient.definition.id,
+          type: this.fbpClient.definition.type,
+          address: this.fbpClient.definition.address,
+          repository: this.fbpClient.definition.repository,
+          repositoryVersion: this.fbpClient.definition.repositoryVersion,
         });
       })
       .then(() => {
