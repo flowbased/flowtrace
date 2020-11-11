@@ -73,7 +73,7 @@ function componentsFromGraph(components, graph) {
       description: '',
       subgraph: false,
       inPorts: [],
-      outPorts: []
+      outPorts: [],
     };
     Object.keys(graph.inports).forEach((portName) => {
       const portDef = graph.inports[portName];

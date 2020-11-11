@@ -56,10 +56,10 @@ function loadGraphs(fbpClient, tracer, mainGraph) {
             name: graphName,
           })
           .then(loadGraph)
-          .then((graphDefinition) => {
-            graphDefinition.name = graphName;
-            return graphDefinition;
-          })))
+          .then((graphDefinition) => ({
+            ...graphDefinition,
+            name: graphName,
+          }))))
         .then((graphs) => {
           const filtered = filterGraphs(mainGraph, graphs);
           filtered.forEach((graphDefinition) => {
@@ -89,8 +89,14 @@ class FlowtraceRecorder {
       const event = `${signal.protocol}:${signal.command}`;
       switch (event) {
         case 'network:data': {
-          tracer.addNetworkPacket(event, signal.payload.src, signal.payload.tgt, signal.payload.graph, signal.payload);
-          return;
+          tracer.addNetworkPacket(
+            event,
+            signal.payload.src,
+            signal.payload.tgt,
+            signal.payload.graph,
+            signal.payload,
+          );
+          break;
         }
         default: {
           // Ignore
