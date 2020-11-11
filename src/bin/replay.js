@@ -58,7 +58,21 @@ const sendError = function (protocol, error, sendFunc) {
   });
 };
 
-function componentsFromGraph(components, graph) {
+function addInport(componentDef, portDef) {
+  if (componentDef.inPorts.find((p) => p.id === portDef.id)) {
+    return;
+  }
+  componentDef.inPorts.push(portDef);
+}
+
+function addOutport(componentDef, portDef) {
+  if (componentDef.outPorts.find((p) => p.id === portDef.id)) {
+    return;
+  }
+  componentDef.outPorts.push(portDef);
+}
+
+function componentsFromGraph(components, graph, graphs) {
   const newComponents = {
     ...components,
   };
@@ -71,7 +85,7 @@ function componentsFromGraph(components, graph) {
       name: node.component,
       icon: 'cog',
       description: '',
-      subgraph: false,
+      subgraph: (Object.keys(graphs).indexOf(node.component) !== -1),
       inPorts: [],
       outPorts: [],
     };
@@ -80,7 +94,7 @@ function componentsFromGraph(components, graph) {
       if (portDef.process !== nodeId) {
         return;
       }
-      componentDef.inPorts.push({
+      addInport(componentDef, {
         id: portDef.port,
         type: 'all',
       });
@@ -90,20 +104,20 @@ function componentsFromGraph(components, graph) {
       if (portDef.process !== nodeId) {
         return;
       }
-      componentDef.outPorts.push({
+      addOutport(componentDef, {
         id: portDef.port,
         type: 'all',
       });
     });
     graph.connections.forEach((edge) => {
       if (edge.src && edge.src.process === nodeId) {
-        componentDef.outPorts.push({
+        addOutport(componentDef, {
           id: edge.src.port,
           type: 'all',
         });
       }
       if (edge.tgt && edge.tgt.process === nodeId) {
-        componentDef.inPorts.push({
+        addInport(componentDef, {
           id: edge.tgt.port,
           type: 'all',
         });
@@ -120,7 +134,7 @@ const sendComponents = function (flowtrace, sendFunc, callback) {
   const graphs = flowtrace.header != null ? flowtrace.header.graphs : {};
   let components = {};
   Object.keys(graphs).forEach((graph) => {
-    components = componentsFromGraph(components, graphs[graph]);
+    components = componentsFromGraph(components, graphs[graph], graphs);
   });
 
   Object.keys(components).forEach((componentName) => {
