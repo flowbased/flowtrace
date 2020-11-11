@@ -18,7 +18,7 @@ function loadGraphs(fbpClient, tracer, mainGraph) {
   // TODO: Instead of fetching all subgraphs, might be more
   // efficient to load the main graph, and then recurse
   return fbpClient.protocol.component.list()
-    .then((components) => components.filter((c) => c.subgraph))
+    .then((components) => components.filter((c) => (c.subgraph && c.name !== 'Graph')))
     .then((subgraphs) => {
       const graphNames = subgraphs.map((c) => c.name);
       if (graphNames.indexOf(mainGraph) === -1) {
@@ -31,7 +31,9 @@ function loadGraphs(fbpClient, tracer, mainGraph) {
         return true;
       });
       return Promise.all(graphsMissing.map((graphName) => fbpClient
-        .protocol.component.getSource(graphName)
+        .protocol.component.getsource({
+          name: graphName,
+        })
         .then(loadGraph)
         .then((graphDefinition) => {
           const main = (graphName === mainGraph);
