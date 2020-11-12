@@ -6,20 +6,20 @@ It is used for retroactive (after-the-fact) debugging; to locate, understand and
 
 The concept is analogous to a 'stacktrace' or 'core dump' for imperative code.
 
-This project will define a data format to store traces in,
-and provide debugging tools for working with these traces.
+This project provides a data format to store traces in, and provide debugging tools for working with these traces, as well as JavaScript library for recording and producing them.
 
 ## Status
-Minimally useful
+
+In production
 
 * NoFlo has support for creating flowtraces,
 from [noflo-nodejs 0.6](https://github.com/noflo/noflo-nodejs#debugging)
 and [noflo-runtime-msgflo 0.2.2](https://github.com/noflo/noflo-runtime-msgflo#debugging)
+* [fbp-spec 0.8](https://github.com/flowbased/fbp-spec) has support for capturing flowtraces of test runs
 * Several commandline tools exist for working with flowtraces
 * Note: File format not 100% finalized
-* Some not-yet-useful timeline UI prototypes exist
 
-See [braindump](./doc/braindump.md) and [UI notes](./ui/notes.md) for ideas/plans.
+See [braindump](./doc/braindump.md) for ideas/plans.
 
 ## Installing
 
@@ -28,9 +28,8 @@ First make sure you have [Node.js](http://nodejs.org/) with NPM installed.
 To install locally in a project. Recommended.
 
     npm install flowtrace
-    export PATH=./node_modules/.bin:$PATH
 
-To install globablly on your system
+To install globally on your system
 
     npm install -g flowtrace
 
@@ -38,7 +37,7 @@ To install globablly on your system
 
 `flowtrace-show` reads a flowtrace, and renders a human-friendly log output from it.
 
-    ./bin/flowtrace-show mytrace.flowtrace.json
+    npx flowtrace-show mytrace.flowtrace.json
 
 Example output:
 
@@ -58,15 +57,15 @@ When used in a terminal, supports colors.
 `flowtrace-replay` reads a flowtrace, and then acts as a live FBP runtime. That means it can be used with
 any FBP IDEs/client which support the [FBP runtime protocol](http://noflojs.org/documentation/protocol/).
 
-    flowtrace-replay mytrace.flowtrace.json
+    npx flowtrace-replay mytrace.flowtrace.json
 
-By default this will open [Flowhub](app.flowhub.io) in your browser, automatically connect and show you the graph.
+By default this will open [Flowhub](https://app.flowhub.io) in your browser, automatically connect and show you the graph.
 To replay the data press the play button. You should then see the data flowing through edges.
 
 ![Flowtrace replayed in Flowhub](./doc/flowtrace-replay-flowhub.png)
 
 You can specify which `--ide` to use, and disable automatic opening of browser with `-n`.
 
-    flowtrace-replay --ide http://localhost:8888 -n
+    npx flowtrace-replay --ide http://localhost:8888 -n
 
 You can also set the `--host` and `--port`. See `--help` for all options.
