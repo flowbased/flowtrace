@@ -69,3 +69,34 @@ You can specify which `--ide` to use, and disable automatic opening of browser w
     npx flowtrace-replay --ide http://localhost:8888 -n
 
 You can also set the `--host` and `--port`. See `--help` for all options.
+
+## Recording flowtraces in JavaScript
+
+It is possible to use this library for recording and serializing flowtraces. Quick example:
+
+```javascript
+const { Flowtrace } = require('flowtrace');
+
+const tracer = new Flowtrace({
+  // metadata about this run
+});
+
+// Register the main graph you're tracing
+tracer.addGraph('example', myGraph, true);
+// You should also call addGraph for each subgraph that is running
+
+myProgram.on('packet', (packet) => {
+  // Tell Flowtracer about each packet that arrives
+  tracer.addNetworkpacket('network:data', packet.src, packet.tgt, 'example', packet.data);
+});
+
+myProgram.on('end', () => {
+  // Once your program is finished (or errors), you can dump the Flowtrace
+  const myTrace = tracer.toJSON();
+  fs.writeFile('example.flowtrace.json', myTrace, (err) => {
+    // ...
+  });
+});
+```
+
+See the `src/lib/Flowtrace.js` file for more information.
