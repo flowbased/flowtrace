@@ -1,7 +1,7 @@
 const querystring = require('querystring');
 const program = require('commander');
 const os = require('os');
-const open = require('opn');
+const open = require('open');
 const http = require('http');
 const debug = require('debug')('flowtrace:replay');
 const debugReceive = require('debug')('flowtrace:replay:receive');
@@ -360,13 +360,15 @@ exports.main = function () {
       const liveUrl = flowhubLiveUrl(options);
       console.log('Trace live URL:', liveUrl);
       if (options.open) {
-        open(liveUrl, (openErr) => {
-          if (openErr) {
-            console.log('Failed to open live URL in browser:', openErr);
-            return;
-          }
-          console.log('Opened in browser');
-        });
+        open(liveUrl)
+          .then(
+            () => {
+              console.log('Opened in browser');
+            },
+            (openErr) => {
+              console.log('Failed to open live URL in browser:', openErr);
+            },
+          );
       }
     });
   });
