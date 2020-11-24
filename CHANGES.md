@@ -1,3 +1,7 @@
+## 0.1.3 (2020-11-24)
+
+* Added a `clear` method to the Flowtracer for emptying the event buffer
+
 ## 0.1.2 (2020-11-11)
 
 * Added a fbp-protocol recorder to create Flowtraces client-side (for example in the fbp-spec tool or Flowhub)
