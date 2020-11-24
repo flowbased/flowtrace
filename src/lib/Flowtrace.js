@@ -5,14 +5,19 @@ const { EventEmitter } = require('events');
 class Flowtrace extends EventEmitter {
   constructor(metadata, bufferSize = 400) {
     super();
-    this.events = new CircularBuffer(bufferSize);
+    this.bufferSize = bufferSize;
     this.graphs = {};
     this.metadata = {
       ...metadata,
       start: new Date(),
     };
     this.mainGraph = null;
+    this.clear();
     this.subscribe();
+  }
+
+  clear() {
+    this.events = new CircularBuffer(this.bufferSize);
   }
 
   subscribe() {
