@@ -12,9 +12,7 @@ This project provides a data format to store traces in, and provide debugging to
 
 In production
 
-* NoFlo has support for creating flowtraces,
-from [noflo-nodejs 0.6](https://github.com/noflo/noflo-nodejs#debugging)
-and [noflo-runtime-msgflo 0.2.2](https://github.com/noflo/noflo-runtime-msgflo#debugging)
+* [NoFlo](https://github.com/noflo/noflo) has support for creating flowtraces from 1.3.0 onwards. Can be triggered programmatically, via fbp-protocol, or with the [noflo-nodejs](https://github.com/noflo/noflo-nodejs) command-line tool
 * [fbp-spec 0.8](https://github.com/flowbased/fbp-spec) has support for capturing flowtraces of test runs
 * Several commandline tools exist for working with flowtraces
 * Note: File format not 100% finalized
