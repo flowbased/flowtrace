@@ -17,7 +17,13 @@ const connectionId = function (conn) {
   } else {
     src = 'DATA';
   }
-  return `${src} -> ${conn.tgt.port.toUpperCase()} ${conn.tgt.node}()`;
+  let tgt;
+  if ((conn.tgt != null ? conn.tgt.node : undefined)) {
+    src = `${conn.tgt.port.toUpperCase()} ${conn.tgt.node}()`;
+  } else {
+    src = 'OUT';
+  }
+  return `${src} -> ${tgt}`;
 };
 
 function mainGraphName(flowtrace) {
