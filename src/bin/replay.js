@@ -12,16 +12,16 @@ const websocket = require('./websocket');
 const connectionId = function (conn) {
   // FIXME: remove when https://github.com/noflo/noflo-ui/issues/293 is fixed
   let src;
-  if ((conn.src != null ? conn.src.node : undefined)) {
+  if (conn.src && conn.src.node) {
     src = `${conn.src.node}() ${conn.src.port.toUpperCase()}`;
   } else {
     src = 'DATA';
   }
   let tgt;
-  if ((conn.tgt != null ? conn.tgt.node : undefined)) {
-    src = `${conn.tgt.port.toUpperCase()} ${conn.tgt.node}()`;
+  if (conn.tgt) {
+    tgt = `${conn.tgt.port.toUpperCase()} ${conn.tgt.node}()`;
   } else {
-    src = 'OUT';
+    tgt = 'OUT';
   }
   return `${src} -> ${tgt}`;
 };
