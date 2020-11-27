@@ -5,10 +5,16 @@ const trace = require('../lib/trace');
 const connectionId = function (data) {
   const { src, tgt } = data;
 
-  if (src) {
+  if (src && tgt) {
     return `${src.node} ${src.port.toUpperCase()} -> ${tgt.port.toUpperCase()} ${tgt.node}`;
   }
-  return `-> ${tgt.port.toUpperCase()} ${tgt.node}`;
+  if (src) {
+    return `${src.node} ${src.port.toUpperCase()} ->`;
+  }
+  if (tgt) {
+    return `-> ${tgt.port.toUpperCase()} ${tgt.node}`;
+  }
+  return 'UNKNOWN';
 };
 
 const renderText = function (msg, options = {}) {
