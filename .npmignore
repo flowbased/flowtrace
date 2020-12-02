@@ -1,0 +1,4 @@
+.git*
+/coverage/
+/.nyc_output/
+/.github/

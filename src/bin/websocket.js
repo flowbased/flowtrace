@@ -1,4 +1,4 @@
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["send"] }] */
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["send", "receive"] }] */
 const WebSocketServer = require('websocket').server;
 
 // XXX: Copied from https://github.com/noflo/noflo-runtime-websocket/blob/master/runtime/network.js
@@ -10,6 +10,21 @@ class WebSocketRuntime {
     this.connections = [];
   }
 
+  /**
+   * @param {string} protocol
+   * @param {string} command
+   * @param {Object} payload
+   * @param {any} context
+   * @abstract
+   */
+  receive(protocol, command, payload, context) {} // eslint-disable-line no-unused-vars
+
+  /**
+   * @param {string} protocol
+   * @param {string} topic
+   * @param {Object} payload
+   * @param {any} context
+   */
   send(protocol, topic, payload, context) {
     if (!context.connection || !context.connection.connected) {
       return;
@@ -21,6 +36,11 @@ class WebSocketRuntime {
     }));
   }
 
+  /**
+   * @param {string} protocol
+   * @param {string} topic
+   * @param {Object} payload
+   */
   sendAll(protocol, topic, payload) {
     this.connections.forEach((connection) => {
       this.send(protocol, topic, payload, {
