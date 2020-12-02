@@ -10,8 +10,21 @@ const { EventEmitter } = require('events');
  */
 
 /**
+ * @typedef {Object} FlowtraceMetadata
+ * @property {string} [label]
+ * @property {string} [runtime]
+ * @property {string} [type]
+ * @property {string} [address]
+ * @property {string} [namespace]
+ * @property {string} [repository]
+ * @property {string} [repositoryVersion]
+ * @property {Date} [start]
+ * @property {Date} [end]
+ */
+
+/**
  * @typedef {Object} FlowtraceJsonHeader
- * @property {Object} metadata
+ * @property {FlowtraceMetadata} metadata
  * @property {Object.<string, import("fbp-graph/src/Types").GraphJson>} graphs
  * @property {string} main
  */
@@ -33,7 +46,7 @@ const { EventEmitter } = require('events');
 
 class Flowtrace extends EventEmitter {
   /**
-   * @param {Object} metadata
+   * @param {FlowtraceMetadata} metadata
    * @param {number} bufferSize
    */
   constructor(metadata, bufferSize = 400) {
@@ -44,6 +57,9 @@ class Flowtrace extends EventEmitter {
       ...metadata,
       start: new Date(),
     };
+    /**
+     * @type {string | null}
+     */
     this.mainGraph = null;
     this.clear();
     this.subscribe();
