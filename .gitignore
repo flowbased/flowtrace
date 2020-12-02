@@ -3,5 +3,6 @@ components/
 browser/
 bower_components/
 build/
+dist/
 package-lock.json
 .nyc_output/

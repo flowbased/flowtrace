@@ -2,7 +2,40 @@ const CircularBuffer = require('circular-buffer');
 const clone = require('clone');
 const { EventEmitter } = require('events');
 
+/**
+ * @typedef {Object} PacketPort
+ * @property {string} node
+ * @property {string} port
+ * @property {number} [index]
+ */
+
+/**
+ * @typedef {Object} FlowtraceJsonHeader
+ * @property {Object} metadata
+ * @property {Object.<string, import("fbp-graph/src/Types").GraphJson>} graphs
+ * @property {string} main
+ */
+
+/**
+ * @typedef {Object} FlowtraceJsonEvent
+ * @property {string} protocol
+ * @property {string} command
+ * @property {Object} payload
+ * @property {string} graph
+ * @property {Date} time
+ */
+
+/**
+ * @typedef {Object} FlowtraceJson
+ * @property {FlowtraceJsonHeader} header
+ * @property {FlowtraceJsonEvent[]} events
+ */
+
 class Flowtrace extends EventEmitter {
+  /**
+   * @param {Object} metadata
+   * @param {number} bufferSize
+   */
   constructor(metadata, bufferSize = 400) {
     super();
     this.bufferSize = bufferSize;
@@ -16,6 +49,9 @@ class Flowtrace extends EventEmitter {
     this.subscribe();
   }
 
+  /**
+   * @returns {void}
+   */
   clear() {
     this.events = new CircularBuffer(this.bufferSize);
   }
@@ -31,6 +67,12 @@ class Flowtrace extends EventEmitter {
     });
   }
 
+  /**
+   * @param {string} graphName
+   * @param {import("fbp-graph").Graph} graph
+   * @param {boolean} [main]
+   * @returns {void}
+   */
   addGraph(graphName, graph, main = false) {
     this.graphs[graphName] = graph;
     if (main) {
@@ -38,6 +80,14 @@ class Flowtrace extends EventEmitter {
     }
   }
 
+  /**
+   * @param {string} type
+   * @param {PacketPort | null} src
+   * @param {PacketPort | null} tgt
+   * @param {string} graph
+   * @param {Object} payload
+   * @returns {void}
+   */
   addNetworkPacket(type, src, tgt, graph, payload) {
     this.emit('event', type, {
       ...payload,
@@ -46,18 +96,35 @@ class Flowtrace extends EventEmitter {
     }, graph);
   }
 
+  /**
+   * @param {string} graph
+   * @returns {void}
+   */
   addNetworkStarted(graph) {
     this.emit('event', 'network:started', {}, graph);
   }
 
+  /**
+   * @param {string} graph
+   * @returns {void}
+   */
   addNetworkStopped(graph) {
     this.emit('event', 'network:stopped', {}, graph);
   }
 
+  /**
+   * @param {string} graph
+   * @param {Error} error
+   * @returns {void}
+   */
   addNetworkError(graph, error) {
     this.emit('event', 'network:stopped', error, graph);
   }
 
+  /**
+   * @param {string} graph
+   * @returns {void}
+   */
   addNetworkIcon(graph, node, icon) {
     this.emit('event', 'network:icon', {
       node,
@@ -65,6 +132,9 @@ class Flowtrace extends EventEmitter {
     }, graph);
   }
 
+  /**
+   * @returns {FlowtraceJson}
+   */
   toJSON() {
     const events = this.events.toarray().map((event) => {
       const [protocol, command] = event.event.split(':');

@@ -40,6 +40,12 @@ function mainGraphName(flowtrace) {
   return mainGraph;
 }
 
+/**
+ * @param {import('../lib/Flowtrace').FlowtraceJson} flowtrace
+ * @param {Function} sendFunc
+ * @param {Function} callback
+ * @returns {void}
+ */
 const replayEvents = function (flowtrace, sendFunc, callback) {
   flowtrace.events.forEach((event) => {
     sendFunc({
@@ -78,6 +84,12 @@ function addOutport(componentDef, portDef) {
   componentDef.outPorts.push(portDef);
 }
 
+/**
+ * @param {Object} components
+ * @param {import("fbp-graph/src/Types").GraphJson} graph
+ * @param {Object.<string, import("fbp-graph/src/Types").GraphJson>} graphs
+ * @returns {Object}
+ */
 function componentsFromGraph(components, graph, graphs) {
   const newComponents = {
     ...components,
@@ -133,7 +145,12 @@ function componentsFromGraph(components, graph, graphs) {
   });
   return newComponents;
 }
-
+/**
+ * @param {import('../lib/Flowtrace').FlowtraceJson} flowtrace
+ * @param {Function} sendFunc
+ * @param {Function} callback
+ * @returns {void}
+ */
 const sendComponents = function (flowtrace, sendFunc, callback) {
   // XXX: should the trace also store component info??
   // maybe optional.
@@ -157,9 +174,15 @@ const sendComponents = function (flowtrace, sendFunc, callback) {
     command: 'componentsready',
     payload: Object.keys(components).length,
   });
-  return callback(null);
+  callback(null);
 };
 
+/**
+ * @param {import('../lib/Flowtrace').FlowtraceJson} flowtrace
+ * @param {string} graphName
+ * @param {Function} sendFunc
+ * @returns {void}
+ */
 const sendGraphSource = function (flowtrace, graphName, sendFunc) {
   // FIXME: get rid of this workaround for https://github.com/noflo/noflo-ui/issues/390
 
@@ -203,6 +226,10 @@ const flowhubLiveUrl = function (options) {
 
 const knownUnsupportedCommands = (p, c) => (p === 'network') && (c === 'debug');
 
+/**
+ * @param {string} [preferredInterface]
+ * @returns {string}
+ */
 function discoverHost(preferredInterface) {
   const ifaces = os.networkInterfaces();
   let address;
@@ -221,7 +248,7 @@ function discoverHost(preferredInterface) {
     }
   };
 
-  if ((preferredInterface) && Array.from(ifaces).includes(preferredInterface)) {
+  if ((preferredInterface) && ifaces[preferredInterface]) {
     ifaces[preferredInterface].forEach(filter);
   } else {
     Object.keys(ifaces).forEach((device) => {
@@ -263,6 +290,9 @@ exports.main = function () {
   options = normalizeOptions(options);
   const filepath = options.trace;
 
+  /**
+   * @type {import('../lib/Flowtrace').FlowtraceJson | null}
+   */
   let mytrace = null;
   const httpServer = new http.Server();
   const runtime = websocket(httpServer, {});

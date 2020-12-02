@@ -143,7 +143,12 @@ const renderTimeline = function (graph, times) {
   debug('processes', Object.keys(graph.processes));
 
   let flows = extractFlows(graph);
-  flows = flows.sort((a, b) => a.length > b.length);
+  flows = flows.sort((a, b) => {
+    if (a.length > b.length) {
+      return 1;
+    }
+    return 0;
+  });
   const flow = flows[0]; // longest
 
   const pretty = flow.map((c) => `${c.src.process}.${c.src.port} -> ${c.tgt.process}.${c.tgt.port}`);

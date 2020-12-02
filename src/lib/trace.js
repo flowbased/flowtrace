@@ -3,6 +3,18 @@ require('isomorphic-fetch');
 
 exports.loadString = (str) => JSON.parse(str);
 
+/**
+ * @callback FlowtraceCallback
+ * @param {Error | null} err
+ * @param {import("./Flowtrace").FlowtraceJson} [flowtrace]
+ * @returns {void}
+ */
+
+/**
+ * @param {string} filepath
+ * @param {FlowtraceCallback} callback
+ * @returns {void}
+ */
 exports.loadFile = function (filepath, callback) {
   fs.readFile(filepath, { encoding: 'utf-8' }, (err, contents) => {
     let trace;
@@ -20,6 +32,11 @@ exports.loadFile = function (filepath, callback) {
   });
 };
 
+/**
+ * @param {string} url
+ * @param {FlowtraceCallback} callback
+ * @returns {void}
+ */
 exports.loadHttp = function (url, callback) {
   fetch(url)
     .then((response) => {

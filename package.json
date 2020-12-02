@@ -3,6 +3,7 @@
   "version": "0.1.3",
   "description": "Tracing format tools for FBP",
   "main": "src/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "flowtrace-show": "./bin/flowtrace-show",
     "flowtrace-replay": "./bin/flowtrace-replay"
@@ -40,6 +41,7 @@
     "websocket": "^1.0.21"
   },
   "devDependencies": {
+    "@types/node": "^14.14.10",
     "chai": "^4.0.0",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
@@ -51,11 +53,14 @@
     "mocha": "^8.1.3",
     "noflo-core": "^0.6.1",
     "noflo-nodejs": "^0.14.0",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "typescript": "^4.1.2"
   },
   "scripts": {
     "lint": "eslint src spec",
-    "pretest": "npm run lint",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run lint && npm run typecheck",
+    "build": "tsc --emitDeclarationOnly",
     "test": "nyc mocha spec/*.js"
   },
   "nyc": {
