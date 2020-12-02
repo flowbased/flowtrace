@@ -118,7 +118,16 @@ class Flowtrace extends EventEmitter {
    * @returns {void}
    */
   addNetworkError(graph, error) {
-    this.emit('event', 'network:stopped', error, graph);
+    this.emit('event', 'network:error', error, graph);
+  }
+
+  /**
+   * @param {string} graph
+   * @param {Error} error
+   * @returns {void}
+   */
+  addNetworkProcessError(graph, error) {
+    this.emit('event', 'network:processerror', error, graph);
   }
 
   /**
@@ -130,6 +139,18 @@ class Flowtrace extends EventEmitter {
       node,
       icon,
     }, graph);
+  }
+
+  /**
+   * @param {string} graph
+   * @param {Object} payload
+   * @param {string} payload.message
+   * @param {string} [payload.type]
+   * @param {string} [payload.previewurl]
+   * @returns {void}
+   */
+  addNetworkOutput(graph, payload) {
+    this.emit('event', 'network:output', payload, graph);
   }
 
   /**
