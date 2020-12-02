@@ -10,8 +10,21 @@ const { EventEmitter } = require('events');
  */
 
 /**
+ * @typedef {Object} FlowtraceMetadata
+ * @property {string} [label]
+ * @property {string} [runtime]
+ * @property {string} [type]
+ * @property {string} [address]
+ * @property {string} [namespace]
+ * @property {string} [repository]
+ * @property {string} [repositoryVersion]
+ * @property {Date} [start]
+ * @property {Date} [end]
+ */
+
+/**
  * @typedef {Object} FlowtraceJsonHeader
- * @property {Object} metadata
+ * @property {FlowtraceMetadata} metadata
  * @property {Object.<string, import("fbp-graph/src/Types").GraphJson>} graphs
  * @property {string} main
  */
@@ -33,7 +46,7 @@ const { EventEmitter } = require('events');
 
 class Flowtrace extends EventEmitter {
   /**
-   * @param {Object} metadata
+   * @param {FlowtraceMetadata} metadata
    * @param {number} bufferSize
    */
   constructor(metadata, bufferSize = 400) {
@@ -44,6 +57,9 @@ class Flowtrace extends EventEmitter {
       ...metadata,
       start: new Date(),
     };
+    /**
+     * @type {string | null}
+     */
     this.mainGraph = null;
     this.clear();
     this.subscribe();
@@ -118,7 +134,16 @@ class Flowtrace extends EventEmitter {
    * @returns {void}
    */
   addNetworkError(graph, error) {
-    this.emit('event', 'network:stopped', error, graph);
+    this.emit('event', 'network:error', error, graph);
+  }
+
+  /**
+   * @param {string} graph
+   * @param {Error} error
+   * @returns {void}
+   */
+  addNetworkProcessError(graph, error) {
+    this.emit('event', 'network:processerror', error, graph);
   }
 
   /**
@@ -130,6 +155,18 @@ class Flowtrace extends EventEmitter {
       node,
       icon,
     }, graph);
+  }
+
+  /**
+   * @param {string} graph
+   * @param {Object} payload
+   * @param {string} payload.message
+   * @param {string} [payload.type]
+   * @param {string} [payload.previewurl]
+   * @returns {void}
+   */
+  addNetworkOutput(graph, payload) {
+    this.emit('event', 'network:output', payload, graph);
   }
 
   /**
