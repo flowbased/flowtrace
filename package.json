@@ -2,7 +2,7 @@
   "name": "flowtrace",
   "version": "0.1.5",
   "description": "Tracing format tools for FBP",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
     "flowtrace-show": "./bin/flowtrace-show",
@@ -48,16 +48,15 @@
   },
   "scripts": {
     "lint": "eslint src spec",
-    "typecheck": "tsc --noEmit",
-    "pretest": "npm run lint && npm run typecheck",
-    "build": "tsc --emitDeclarationOnly",
+    "pretest": "npm run build && npm run lint",
+    "build": "tsc",
     "test": "nyc mocha spec/*.js"
   },
   "nyc": {
     "include": [
-      "src/*.js",
-      "src/lib/*.js",
-      "src/bin/*.js"
+      "dist/*.js",
+      "dist/lib/*.js",
+      "dist/bin/*.js"
     ]
   }
 }

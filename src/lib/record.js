@@ -1,5 +1,5 @@
-const fbpGraph = require('fbp-graph');
-const Flowtrace = require('./Flowtrace');
+import fbpGraph from 'fbp-graph';
+import Flowtrace from './Flowtrace';
 
 function loadGraph(source) {
   return new Promise((resolve, reject) => {
@@ -70,7 +70,7 @@ function loadGraphs(fbpClient, tracer, mainGraph) {
     });
 }
 
-class FlowtraceRecorder {
+export default class FlowtraceRecorder {
   constructor(fbpClient) {
     this.fbpClient = fbpClient;
     this.traces = {};
@@ -154,5 +154,3 @@ class FlowtraceRecorder {
     return this.traces[graph].toJSON();
   }
 }
-
-module.exports = FlowtraceRecorder;

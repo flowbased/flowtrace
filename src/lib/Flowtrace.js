@@ -1,6 +1,6 @@
-const CircularBuffer = require('circular-buffer');
-const clone = require('clone');
-const { EventEmitter } = require('events');
+import CircularBuffer from 'circular-buffer';
+import clone from 'clone';
+import { EventEmitter } from 'events';
 
 /**
  * @typedef {Object} PacketPort
@@ -44,7 +44,7 @@ const { EventEmitter } = require('events');
  * @property {FlowtraceJsonEvent[]} events
  */
 
-class Flowtrace extends EventEmitter {
+export default class Flowtrace extends EventEmitter {
   /**
    * @param {FlowtraceMetadata} metadata
    * @param {number} bufferSize
@@ -197,5 +197,3 @@ class Flowtrace extends EventEmitter {
     };
   }
 }
-
-module.exports = Flowtrace;

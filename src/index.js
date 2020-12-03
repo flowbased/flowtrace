@@ -1,8 +1,5 @@
-module.exports = {
-  // eslint-disable-next-line global-require
-  trace: require('./lib/trace'),
-  // eslint-disable-next-line global-require
-  Flowtrace: require('./lib/Flowtrace'),
-  // eslint-disable-next-line global-require
-  FlowtraceRecorder: require('./lib/record'),
-};
+import * as trace from './lib/trace';
+
+export { default as Flowtrace } from './lib/Flowtrace';
+export { trace };
+export { default as FlowtraceRecorder } from './lib/record';

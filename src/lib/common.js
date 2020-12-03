@@ -1,7 +1,8 @@
-const fbp = require('fbp');
-const path = require('path');
+import { parse } from 'fbp';
+import { extname } from 'path';
+import { readFile } from 'fs';
 
-exports.randomString = function (n) {
+export function randomString(n) {
   let idx;
   let j;
   let ref;
@@ -14,19 +15,19 @@ exports.randomString = function (n) {
   }
 
   return text;
-};
+}
 
-exports.isBrowser = function isBrowser() {
+export function isBrowser() {
   if ((typeof process !== 'undefined') && process.execPath && process.execPath.match(/node|iojs/)) {
     return false;
   }
   return true;
-};
+}
 
-exports.readGraph = function readGraph(contents, type, options) {
+export function readGraph(contents, type, options) {
   let graph;
   if (type === 'fbp') {
-    graph = fbp.parse(contents, { caseSensitive: options.caseSensitive });
+    graph = parse(contents, { caseSensitive: options.caseSensitive });
   } else if (type === 'object') {
     graph = contents;
   } else {
@@ -38,21 +39,19 @@ exports.readGraph = function readGraph(contents, type, options) {
   if ((graph.outports == null)) { graph.outports = {}; }
 
   return graph;
-};
+}
 
 // node.js only
-exports.readGraphFile = function readGraphFile(filepath, options, callback) {
-  // eslint-disable-next-line global-require
-  const fs = require('fs');
-  const type = path.extname(filepath).replace('.', '');
-  return fs.readFile(filepath, { encoding: 'utf-8' }, (err, contents) => {
+export function readGraphFile(filepath, options, callback) {
+  const type = extname(filepath).replace('.', '');
+  return readFile(filepath, { encoding: 'utf-8' }, (err, contents) => {
     let graph;
     if (err) { return callback(err); }
     try {
-      graph = exports.readGraph(contents, type, options);
+      graph = readGraph(contents, type, options);
     } catch (e) {
       return callback(e);
     }
     return callback(null, graph);
   });
-};
+}
