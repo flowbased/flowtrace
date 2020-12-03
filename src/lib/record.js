@@ -1,10 +1,10 @@
-import fbpGraph from 'fbp-graph';
+import { graph } from 'fbp-graph';
 import Flowtrace from './Flowtrace';
 
 function loadGraph(source) {
   return new Promise((resolve, reject) => {
     const method = (source.language === 'fbp') ? 'loadFBP' : 'loadJSON';
-    fbpGraph.graph[method](source.code, (err, instance) => {
+    graph[method](source.code, (err, instance) => {
       if (err) {
         reject(err);
         return;
@@ -77,13 +77,13 @@ export default class FlowtraceRecorder {
     this.signalHandlers = {};
   }
 
-  handleSignal(graph) {
-    if (this.signalHandlers[graph]) {
-      return this.signalHandlers[graph];
+  handleSignal(graphName) {
+    if (this.signalHandlers[graphName]) {
+      return this.signalHandlers[graphName];
     }
-    const tracer = this.traces[graph];
+    const tracer = this.traces[graphName];
     const handler = (signal) => {
-      if (signal.payload.graph !== graph) {
+      if (signal.payload.graph !== graphName) {
         return;
       }
       const event = `${signal.protocol}:${signal.command}`;
@@ -115,15 +115,15 @@ export default class FlowtraceRecorder {
         }
       }
     };
-    this.signalHandlers[graph] = handler;
+    this.signalHandlers[graphName] = handler;
     return handler;
   }
 
-  start(graph) {
+  start(graphName) {
     return this.fbpClient.connect()
       .then(() => {
         // Prep trace with runtime metadata
-        this.traces[graph] = new Flowtrace({
+        this.traces[graphName] = new Flowtrace({
           runtime: this.fbpClient.definition.id,
           type: this.fbpClient.definition.type,
           address: this.fbpClient.definition.address,
@@ -132,25 +132,25 @@ export default class FlowtraceRecorder {
         });
       })
       .then(() => {
-        this.fbpClient.on('signal', this.handleSignal(graph));
+        this.fbpClient.on('signal', this.handleSignal(graphName));
       })
-      .then(() => loadGraphs(this.fbpClient, this.traces[graph], graph));
+      .then(() => loadGraphs(this.fbpClient, this.traces[graphName], graphName));
   }
 
-  stop(graph) {
-    if (!this.traces[graph]) {
+  stop(graphName) {
+    if (!this.traces[graphName]) {
       return Promise.resolve();
     }
-    this.fbpClient.removeListener('signal', this.handleSignal(graph));
-    this.traces[graph].metadata.end = new Date();
+    this.fbpClient.removeListener('signal', this.handleSignal(graphName));
+    this.traces[graphName].metadata.end = new Date();
     return Promise.resolve();
   }
 
-  dump(graph) {
-    if (!this.traces[graph]) {
+  dump(graphName) {
+    if (!this.traces[graphName]) {
       // No trace for this graph yet
       return {};
     }
-    return this.traces[graph].toJSON();
+    return this.traces[graphName].toJSON();
   }
 }
