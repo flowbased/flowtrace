@@ -1,3 +1,7 @@
+## 0.1.6 (2020-12-03)
+
+* Flowtrace source code now uses JS Modules, with CommonJS version distributed in the package
+
 ## 0.1.5 (2020-12-03)
 
 * This module now ships with basic TypeScript type definitions
