@@ -1,3 +1,8 @@
+## 0.1.4 (2020-12-03)
+
+* Flowtrace helper now includes methods for logging `stdout` and process error events
+* This module now ships with basic TypeScript type definitions
+
 ## 0.1.3 (2020-11-24)
 
 * Added a `clear` method to the Flowtracer for emptying the event buffer

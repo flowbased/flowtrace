@@ -1,6 +1,6 @@
 {
   "name": "flowtrace",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Tracing format tools for FBP",
   "main": "src/index.js",
   "types": "dist/index.d.ts",
