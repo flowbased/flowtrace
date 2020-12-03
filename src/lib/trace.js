@@ -1,5 +1,5 @@
-const fs = require('fs');
-require('isomorphic-fetch');
+import { readFile } from 'fs';
+import 'isomorphic-fetch';
 
 exports.loadString = (str) => JSON.parse(str);
 
@@ -15,8 +15,8 @@ exports.loadString = (str) => JSON.parse(str);
  * @param {FlowtraceCallback} callback
  * @returns {void}
  */
-exports.loadFile = function (filepath, callback) {
-  fs.readFile(filepath, { encoding: 'utf-8' }, (err, contents) => {
+export function loadFile(filepath, callback) {
+  readFile(filepath, { encoding: 'utf-8' }, (err, contents) => {
     let trace;
     if (err) {
       callback(err);
@@ -30,14 +30,14 @@ exports.loadFile = function (filepath, callback) {
     }
     callback(null, trace);
   });
-};
+}
 
 /**
  * @param {string} url
  * @param {FlowtraceCallback} callback
  * @returns {void}
  */
-exports.loadHttp = function (url, callback) {
+export function loadHttp(url, callback) {
   fetch(url)
     .then((response) => {
       if (response.status !== 200) {
@@ -53,4 +53,4 @@ exports.loadHttp = function (url, callback) {
         callback(err);
       },
     );
-};
+}

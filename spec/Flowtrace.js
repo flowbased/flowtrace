@@ -1,5 +1,5 @@
 const chai = require('chai');
-const { Flowtrace } = require('../src/index');
+const { Flowtrace } = require('../dist/index');
 
 describe('Flowtrace class', () => {
   let tracer;

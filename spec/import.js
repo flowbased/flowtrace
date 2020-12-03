@@ -1,5 +1,5 @@
 const chai = require('chai');
-const flowtrace = require('../src/index');
+const flowtrace = require('../dist/index');
 
 describe('Loading Flowtrace', () => {
   it('should contain a tracer', () => {

@@ -1,6 +1,6 @@
-const clc = require('cli-color');
-const ansiStrip = require('cli-color/strip');
-const trace = require('../lib/trace');
+import clc from 'cli-color';
+import ansiStrip from 'cli-color/strip';
+import * as trace from '../lib/trace';
 
 const connectionId = function (data) {
   const { src, tgt } = data;
@@ -57,7 +57,7 @@ const renderText = function (msg, options = {}) {
   return text;
 };
 
-exports.main = function () {
+export default function main() {
   const filepath = process.argv[2];
 
   const options = { verbose: true };
@@ -74,4 +74,4 @@ exports.main = function () {
     });
     return result;
   });
-};
+}

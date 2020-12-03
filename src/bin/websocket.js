@@ -1,5 +1,5 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["send", "receive"] }] */
-const WebSocketServer = require('websocket').server;
+import { server as WebSocketServer } from 'websocket';
 
 // XXX: Copied from https://github.com/noflo/noflo-runtime-websocket/blob/master/runtime/network.js
 // should probably reuse it as-is
@@ -50,7 +50,7 @@ class WebSocketRuntime {
   }
 }
 
-module.exports = function (httpServer, options) {
+export default function createServer(httpServer, options) {
   const wsServer = new WebSocketServer({ httpServer });
   const runtime = new WebSocketRuntime(options);
 
@@ -83,4 +83,4 @@ module.exports = function (httpServer, options) {
   });
 
   return runtime;
-};
+}

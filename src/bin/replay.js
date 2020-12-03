@@ -1,13 +1,15 @@
-const querystring = require('querystring');
-const program = require('commander');
-const os = require('os');
-const open = require('open');
-const http = require('http');
-const debug = require('debug')('flowtrace:replay');
-const debugReceive = require('debug')('flowtrace:replay:receive');
-const debugSend = require('debug')('flowtrace:replay:send');
-const trace = require('../lib/trace');
-const websocket = require('./websocket');
+import querystring from 'querystring';
+import program from 'commander';
+import os from 'os';
+import open from 'open';
+import http from 'http';
+import debug from 'debug';
+import * as trace from '../lib/trace';
+import websocket from './websocket';
+
+const debugProtocol = debug('flowtrace:replay');
+const debugReceive = debug('flowtrace:replay:receive');
+const debugSend = debug('flowtrace:replay:send');
 
 const connectionId = function (conn) {
   // FIXME: remove when https://github.com/noflo/noflo-ui/issues/293 is fixed
@@ -381,7 +383,7 @@ exports.main = function () {
       }
       default: {
         if (!knownUnsupportedCommands(protocol, command)) {
-          debug('Warning: Unknown FBP protocol message', protocol, command);
+          debugProtocol('Warning: Unknown FBP protocol message', protocol, command);
         }
       }
     }

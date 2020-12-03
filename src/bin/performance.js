@@ -1,5 +1,7 @@
-const debug = require('debug')('flowtrace:performance');
-const { readGraphFile } = require('../lib/common');
+import debug from 'debug';
+import { readGraphFile } from '../lib/common';
+
+const debugPerf = debug('flowtrace:performance');
 
 const svg = {
   node(type, attributes, children) {
@@ -27,7 +29,7 @@ const extractFlows = function (graph) {
   // XXX: pretty sure this has serious bugs
   const walkConnectionGraph = function (start, collect, flow = []) {
     const outs = sourceConnections(start);
-    debug('w', start, outs.length, flow.length);
+    debugPerf('w', start, outs.length, flow.length);
     let fl = flow;
     outs.forEach((c) => {
       const tgt = c.tgt.process;
@@ -49,7 +51,7 @@ const extractFlows = function (graph) {
   // find starting points
   Object.keys(graph.processes).forEach((process) => {
     const ins = targetConnections(process);
-    // debug 'c', process, ins.length, outs.length
+    // debugPerf 'c', process, ins.length, outs.length
     const startProcess = ins.length === 0;
     if (!startProcess) { return; }
 
@@ -83,7 +85,7 @@ const renderFlow = function (flow, times) {
     totalTime += times[conn.src.process];
   });
 
-  debug('total time', totalTime);
+  debugPerf('total time', totalTime);
 
   flow.forEach((conn) => {
     const p = conn.src.process;
@@ -98,7 +100,7 @@ const renderFlow = function (flow, times) {
   flow.forEach((conn) => {
     const p = conn.src.process;
     const weight = weights[p];
-    debug('weight', p, weight);
+    debugPerf('weight', p, weight);
 
     const width = times[p] * style.unitSeconds;
     const height = style.baseHeight;
@@ -140,7 +142,7 @@ const renderFlow = function (flow, times) {
 const renderTimeline = function (graph, times) {
   let objects = [];
 
-  debug('processes', Object.keys(graph.processes));
+  debugPerf('processes', Object.keys(graph.processes));
 
   let flows = extractFlows(graph);
   flows = flows.sort((a, b) => {
@@ -152,7 +154,7 @@ const renderTimeline = function (graph, times) {
   const flow = flows[0]; // longest
 
   const pretty = flow.map((c) => `${c.src.process}.${c.src.port} -> ${c.tgt.process}.${c.tgt.port}`);
-  debug('rendering flow', pretty);
+  debugPerf('rendering flow', pretty);
 
   objects = objects.concat(renderFlow(flow, times));
 
@@ -182,7 +184,7 @@ const main = function () {
       if (err.stack) { console.error(err.stack); }
       return process.exit(2);
     }
-    debug('output\n', result.length);
+    debugPerf('output\n', result.length);
     console.log(result);
     return process.exit(0);
   };

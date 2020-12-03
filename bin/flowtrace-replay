@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('../src/bin/replay').main();
+require('../dist/bin/replay').main();
