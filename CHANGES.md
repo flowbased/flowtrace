@@ -1,3 +1,7 @@
+## 0.1.7 (2020-12-03)
+
+* Fixed EventEmitter typing in Flowtrace type defs
+
 ## 0.1.6 (2020-12-03)
 
 * Flowtrace source code now uses JS Modules, with CommonJS version distributed in the package
