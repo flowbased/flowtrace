@@ -1,3 +1,7 @@
+## 0.1.8 (2020-12-03)
+
+* TypeScript definitions no longer rely on the esModuleInterop parameter
+
 ## 0.1.7 (2020-12-03)
 
 * Fixed EventEmitter typing in Flowtrace type defs
