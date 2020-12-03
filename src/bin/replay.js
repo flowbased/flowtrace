@@ -1,8 +1,8 @@
-import querystring from 'querystring';
-import program from 'commander';
-import os from 'os';
-import open from 'open';
-import http from 'http';
+import * as querystring from 'querystring';
+import * as program from 'commander';
+import * as os from 'os';
+import * as open from 'open';
+import { Server } from 'http';
 import debug from 'debug';
 import * as trace from '../lib/trace';
 import websocket from './websocket';
@@ -296,7 +296,7 @@ exports.main = function () {
    * @type {import('../lib/Flowtrace').FlowtraceJson | null}
    */
   let mytrace = null;
-  const httpServer = new http.Server();
+  const httpServer = new Server();
   const runtime = websocket(httpServer, {});
 
   runtime.receive = (protocol, command, payload, context) => {

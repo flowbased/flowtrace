@@ -1,6 +1,6 @@
-import CircularBuffer from 'circular-buffer';
-import clone from 'clone';
-import events from 'events';
+import * as CircularBuffer from 'circular-buffer';
+import * as clone from 'clone';
+import * as events from 'events';
 
 /**
  * @typedef {Object} PacketPort
