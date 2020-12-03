@@ -1,6 +1,6 @@
 import CircularBuffer from 'circular-buffer';
 import clone from 'clone';
-import { EventEmitter } from 'events';
+import events from 'events';
 
 /**
  * @typedef {Object} PacketPort
@@ -44,7 +44,7 @@ import { EventEmitter } from 'events';
  * @property {FlowtraceJsonEvent[]} events
  */
 
-export default class Flowtrace extends EventEmitter {
+export default class Flowtrace extends events.EventEmitter {
   /**
    * @param {FlowtraceMetadata} metadata
    * @param {number} bufferSize
@@ -173,7 +173,7 @@ export default class Flowtrace extends EventEmitter {
    * @returns {FlowtraceJson}
    */
   toJSON() {
-    const events = this.events.toarray().map((event) => {
+    const tracedEvents = this.events.toarray().map((event) => {
       const [protocol, command] = event.event.split(':');
       return {
         protocol,
@@ -183,7 +183,7 @@ export default class Flowtrace extends EventEmitter {
         time: event.time,
       };
     });
-    events.reverse();
+    tracedEvents.reverse();
     return {
       header: {
         metadata: {
@@ -193,7 +193,7 @@ export default class Flowtrace extends EventEmitter {
         graphs: this.graphs,
         main: this.mainGraph,
       },
-      events,
+      events: tracedEvents,
     };
   }
 }
