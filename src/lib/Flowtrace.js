@@ -1,6 +1,6 @@
 import * as CircularBuffer from 'circular-buffer';
 import * as clone from 'clone';
-import * as events from 'events';
+import { EventEmitter } from 'events';
 
 /**
  * @typedef {Object} PacketPort
@@ -44,7 +44,7 @@ import * as events from 'events';
  * @property {FlowtraceJsonEvent[]} events
  */
 
-export default class Flowtrace extends events.EventEmitter {
+export default class Flowtrace extends EventEmitter {
   /**
    * @param {FlowtraceMetadata} metadata
    * @param {number} bufferSize
