@@ -74,9 +74,15 @@ export default class Flowtrace extends EventEmitter {
 
   subscribe() {
     this.on('event', (event, payload, graph) => {
+      let clonedPayload;
+      try {
+        clonedPayload = clone(payload);
+      } catch (e) {
+        clonedPayload = 'DATA';
+      }
       this.events.enq({
         event,
-        payload: clone(payload),
+        payload: clonedPayload,
         graph,
         time: new Date(),
       });
