@@ -1,5 +1,5 @@
-import clc from 'cli-color';
-import ansiStrip from 'cli-color/strip';
+import * as clc from 'cli-color';
+import * as ansiStrip from 'cli-color/strip';
 import * as trace from '../lib/trace';
 
 const connectionId = function (data) {
