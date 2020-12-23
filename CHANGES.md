@@ -1,3 +1,8 @@
+## 0.1.9 (2020-12-23)
+
+* Added safety when adding non-serializable packets to a Flowtrace
+* Fixed flowtrace-show command
+
 ## 0.1.8 (2020-12-03)
 
 * TypeScript definitions no longer rely on the esModuleInterop parameter
