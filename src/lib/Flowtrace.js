@@ -78,7 +78,11 @@ export default class Flowtrace extends EventEmitter {
       try {
         clonedPayload = clone(payload);
       } catch (e) {
-        clonedPayload = 'DATA';
+        // Some data packets can't be serialized
+        clonedPayload = {
+          ...payload,
+          data: `DATA ${typeof payload.data}`,
+        };
       }
       this.events.enq({
         event,
