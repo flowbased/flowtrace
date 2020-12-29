@@ -1,3 +1,7 @@
+## 0.1.10 (2020-12-29)
+
+* Fixed formatting of unserializable data packets
+
 ## 0.1.9 (2020-12-23)
 
 * Added safety when adding non-serializable packets to a Flowtrace
